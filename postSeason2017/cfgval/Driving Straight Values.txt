@@ -1,0 +1,3 @@
+	static double kPS = 0.085000;
+	static double kIS = 0.008333;
+	static double kDS = 0.001042;
