@@ -46,10 +46,10 @@ public class Robot extends IterativeRobot implements PIDOutput  {
 	public static PIDController turnControllerRotate;
 
 
-	static double kPS = 0.085000 / 2f;
-	static double kIS = 0.008333 / 2f;
-	static double kDS = 0;
-//	static double kDS = 0.001042;
+	static double kPS = 0.085000;
+	static double kIS = 0.008333;
+//	static double kDS = 0;
+	static double kDS = 0.001042;
 
 	static double kToleranceDegrees = 1.0f;
 	double rotateToAngleRate = 0;
@@ -161,6 +161,8 @@ public class Robot extends IterativeRobot implements PIDOutput  {
         Scheduler.getInstance().run();
     }
 
+    double rightMotorSpeed = 0;
+    
     /**
      * This function is called periodically during test mode
      */
@@ -170,10 +172,18 @@ public class Robot extends IterativeRobot implements PIDOutput  {
     	if(System.nanoTime()/1000000000 - startTime < 7)
     	{
     		 SmartDashboard.putNumber("PID Output: ", rotateToAngleRate);
-    	 SmartDashboard.putNumber("Yaw: ", ahrs.getYaw());
+    		 SmartDashboard.putNumber("Yaw: ", ahrs.getYaw());
     		
 //    		driveTrain.robotDrive4.drive(-.3, 0);
-    		driveTrain.robotDrive4.setLeftRightMotorOutputs(-(currentRotationRate), -.3);
+    		driveTrain.robotDrive4.setLeftRightMotorOutputs(-(currentRotationRate), rightMotorSpeed);
+    		
+    		if(rightMotorSpeed>-.3)
+    			rightMotorSpeed-=0.006;
+    		
+    		if(rightMotorSpeed<-.3)
+    			rightMotorSpeed = -.3;
+    		
+    		
     		
     	}
     	else
@@ -190,14 +200,14 @@ public class Robot extends IterativeRobot implements PIDOutput  {
     
     public void testInit()
     {
-    	turnControllerStraight.setSetpoint(20);
+    	turnControllerStraight.setSetpoint(0);
     	ahrs.reset();
     	try {
     		Thread.sleep(500);
     	} catch (Exception e) {
     		e.printStackTrace();
     	}
-    	startTime = System.nanoTime()/1000000000;
+    	startTime = System.nanoTime()/1000000000.;
     	turnControllerStraight.enable();
     
 
@@ -206,7 +216,7 @@ public class Robot extends IterativeRobot implements PIDOutput  {
 		
 		// TODO Auto-generated method stub
 		if (output != 0) {
-			System.out.println("Output: " + output);
+			//System.out.println("Output: " + output);
 		}
 		rotateToAngleRate = output;
 
