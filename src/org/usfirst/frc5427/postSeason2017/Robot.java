@@ -50,7 +50,11 @@ public class Robot extends IterativeRobot implements PIDOutput  {
 	static double kIS = 0.008333;
 //	static double kDS = 0;
 	static double kDS = 0.001042;
-
+	
+	static double kPR = 0.085000/3f;
+	static double kIR = 0.008333/3f;
+	static double kDR = 0;
+	
 	static double kToleranceDegrees = 1.0f;
 	double rotateToAngleRate = 0;
 
@@ -111,6 +115,14 @@ public class Robot extends IterativeRobot implements PIDOutput  {
 		turnControllerStraight.setContinuous(true);
 		turnControllerStraight.startLiveWindowMode();
 		
+
+		turnControllerRotate = new PIDController(kPR, kIR, kDR, ahrs, this);
+		turnControllerRotate.setInputRange(-180.0f, 180.0f);
+		turnControllerRotate.setOutputRange(-1.0, 1.0);
+		turnControllerRotate.setAbsoluteTolerance(kToleranceDegrees);
+		turnControllerRotate.setContinuous(true);
+		turnControllerRotate.startLiveWindowMode();
+		
 		LiveWindow.addActuator("turnControllerStraight", "PID Table", turnControllerStraight);
 		LiveWindow.addActuator("Navx", "Ahrs", ahrs);
 //		SmartDashboard.putData("dfsdfds", turnControllerStraight.getSmartDashboardType());
@@ -162,34 +174,60 @@ public class Robot extends IterativeRobot implements PIDOutput  {
     }
 
     double rightMotorSpeed = 0;
-    
+    double setPoint = 0;
+	boolean b = true;
     /**
-     * This function is called periodically during test mode
+     * This function is called periodically during test mode - around 50 times a second
      */
     public void testPeriodic() {
     	double currentRotationRate = rotateToAngleRate;
     	
-    	if(System.nanoTime()/1000000000 - startTime < 7)
+
+		
+    	if(System.nanoTime()/1000000000. - startTime < 2)
     	{
+    		
     		 SmartDashboard.putNumber("PID Output: ", rotateToAngleRate);
     		 SmartDashboard.putNumber("Yaw: ", ahrs.getYaw());
     		
 //    		driveTrain.robotDrive4.drive(-.3, 0);
-    		driveTrain.robotDrive4.setLeftRightMotorOutputs(-(currentRotationRate), rightMotorSpeed);
-    		
+     		driveTrain.robotDrive4.setLeftRightMotorOutputs(-(currentRotationRate), rightMotorSpeed);
+     		
+
     		if(rightMotorSpeed>-.3)
     			rightMotorSpeed-=0.006;
     		
     		if(rightMotorSpeed<-.3)
     			rightMotorSpeed = -.3;
+    	}
+    	else if(System.nanoTime()/1000000000. - startTime < 4)
+    	{
+    		if(b)
+    		{
+        		turnControllerStraight.disable();
+        		turnControllerStraight.stopLiveWindowMode();
+        		turnControllerRotate.enable();
+    		}
     		
+   		 	SmartDashboard.putNumber("PID Output: ", rotateToAngleRate);
+   		 	SmartDashboard.putNumber("Yaw: ", ahrs.getYaw());
+
+     		driveTrain.robotDrive4.setLeftRightMotorOutputs(-(currentRotationRate), rightMotorSpeed);
+     		
+        	turnControllerRotate.setSetpoint(setPoint);
+        	
+    		if(setPoint<90)
+    			setPoint+=.9;
     		
+    		if(setPoint>90)
+    			setPoint = 90;
     		
+    		b = false;
     	}
     	else
     	{
-    		turnControllerStraight.disable();
-    		turnControllerStraight.stopLiveWindowMode();
+    		turnControllerRotate.disable();
+    		turnControllerRotate.stopLiveWindowMode();
     		driveTrain.stop();
     	}
     	
@@ -200,7 +238,6 @@ public class Robot extends IterativeRobot implements PIDOutput  {
     
     public void testInit()
     {
-    	turnControllerStraight.setSetpoint(0);
     	ahrs.reset();
     	try {
     		Thread.sleep(500);
