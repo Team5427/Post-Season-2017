@@ -51,8 +51,11 @@ public class Robot extends IterativeRobot implements PIDOutput  {
 //	static double kDS = 0;
 	static double kDS = 0.001042;
 	
-	static double kPR = 0.085000/3f;
-	static double kIR = 0.008333/3f;
+	static double kPR = 0.028333;
+//	static double kPR = 0.085000/3f;
+	static double kIR = 0;
+//	static double kIR = 0.002777;
+//	static double kIR = 0.008333/3f;
 	static double kDR = 0;
 	
 	static double kToleranceDegrees = 1.0f;
@@ -176,15 +179,18 @@ public class Robot extends IterativeRobot implements PIDOutput  {
     double rightMotorSpeed = 0;
     double setPoint = 0;
 	boolean b = true;
+	
+	public static final double targetSetPoint = 180f;
+	
     /**
      * This function is called periodically during test mode - around 50 times a second
      */
     public void testPeriodic() {
     	double currentRotationRate = rotateToAngleRate;
     	
-
+    	
 		
-    	if(System.nanoTime()/1000000000. - startTime < 2)
+    	if(System.nanoTime()/1000000000. - startTime < -1)
     	{
     		
     		 SmartDashboard.putNumber("PID Output: ", rotateToAngleRate);
@@ -211,16 +217,19 @@ public class Robot extends IterativeRobot implements PIDOutput  {
     		
    		 	SmartDashboard.putNumber("PID Output: ", rotateToAngleRate);
    		 	SmartDashboard.putNumber("Yaw: ", ahrs.getYaw());
+   		 	SmartDashboard.putNumber("Set Point: ", setPoint);
 
      		driveTrain.robotDrive4.setLeftRightMotorOutputs(-(currentRotationRate), rightMotorSpeed);
      		
         	turnControllerRotate.setSetpoint(setPoint);
         	
-    		if(setPoint<90)
+    		if(setPoint < targetSetPoint)
     			setPoint+=.9;
     		
-    		if(setPoint>90)
-    			setPoint = 90;
+    		if(setPoint > targetSetPoint)
+    			setPoint = targetSetPoint;
+    		
+    		System.out.println("SetPoint: " + setPoint);
     		
     		b = false;
     	}
