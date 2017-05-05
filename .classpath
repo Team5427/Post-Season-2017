@@ -8,5 +8,6 @@
 	<classpathentry kind="var" path="cscore" sourcepath="cscore.sources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/navx"/>
 	<classpathentry kind="var" path="USERLIBS_DIR/navx_frc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Frian/Programming/Java/Post-Season-2017/lib/SteelTalonsLibrary.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

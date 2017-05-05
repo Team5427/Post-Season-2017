@@ -52,9 +52,17 @@ public class Robot extends IterativeRobot implements PIDOutput  {
 	static double kDS = 0.001042;
 	
 	//Needs to be tuned
-	static double kPR = 0.085000/7f;
-	static double kIR = 0.008333/7f; //.001190
-	static double kDR = 0.000200;
+	static double kPR = 0.03;
+	static double kIR = 0; //.001190
+//	static double kIR = 0.001; //.001190		// tuned
+//	static double kIR = 0.001190; //.001190
+//	static double kDR = 0;
+	static double kDR = 0.001875;	// old tuned
+//	static double kDR = 0.000200;
+	
+//	static double kPR = 0.085000/7f;
+//	static double kIR = 0.008333/7f; //.001190
+//	static double kDR = 0.000200;
 	
 	static double kToleranceDegrees = 1.0f;
 	double rotateToAngleRate = 0;
