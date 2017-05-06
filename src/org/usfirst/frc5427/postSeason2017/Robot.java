@@ -52,12 +52,12 @@ public class Robot extends IterativeRobot implements PIDOutput  {
 	static double kDS = 0.001042;
 	
 	//Needs to be tuned
-	static double kPR = 0.03;
-	static double kIR = 0; //.001190
+	static double kPR = 0.01;
+	static double kIR = 0.000; //.001190
 //	static double kIR = 0.001; //.001190		// tuned
 //	static double kIR = 0.001190; //.001190
-//	static double kDR = 0;
-	static double kDR = 0.001875;	// old tuned
+	static double kDR = 0;
+//	static double kDR = 0.001875;	// old tuned
 //	static double kDR = 0.000200;
 	
 //	static double kPR = 0.085000/7f;
@@ -119,7 +119,7 @@ public class Robot extends IterativeRobot implements PIDOutput  {
 
 		turnControllerStraight = new PIDController(kPS, kIS, kDS, ahrs, this);
 		turnControllerStraight.setInputRange(-180.0f, 180.0f);
-		turnControllerStraight.setOutputRange(-1.0, 1.0);
+		turnControllerStraight.setOutputRange(-.15, 0.15);
 		turnControllerStraight.setAbsoluteTolerance(kToleranceDegrees);
 		turnControllerStraight.setContinuous(true);
 		turnControllerStraight.startLiveWindowMode();
@@ -195,8 +195,10 @@ public class Robot extends IterativeRobot implements PIDOutput  {
 		
     	if(System.nanoTime()/1000000000. - startTime < 4)
     	{
+    		setPoint = 90;
     		
     		 SmartDashboard.putNumber("PID Output: ", rotateToAngleRate);
+    		 SmartDashboard.putNumber("Yaw Textbox" , ahrs.getYaw());
     		 SmartDashboard.putNumber("Yaw: ", ahrs.getYaw());
     		 SmartDashboard.putNumber("Setpoint: ", setPoint);
     		
@@ -205,11 +207,15 @@ public class Robot extends IterativeRobot implements PIDOutput  {
      		System.out.println(currentRotationRate);
         	turnControllerRotate.setSetpoint(setPoint);
         	
-    		if(setPoint<90)
-    			setPoint+=.9;
-    		
-    		if(setPoint>90)
-    			setPoint = 90;
+        	if (ahrs.getYaw() > 85f) {
+        		turnControllerRotate.setPID(kPR, 0.001, kDR);
+        	}
+        	
+//    		if(setPoint<90)
+//    			setPoint+=.9;
+//    		
+//    		if(setPoint>90)
+//    			setPoint = 90;
 //    		if(rightMotorSpeed>-.3)
 //    			rightMotorSpeed-=0.006;
 //    		
