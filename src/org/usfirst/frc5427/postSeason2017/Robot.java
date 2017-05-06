@@ -44,6 +44,7 @@ public class Robot extends IterativeRobot implements PIDOutput  {
     public static AHRS ahrs;
 	public static PIDController turnControllerStraight;
 	public static PIDController turnControllerRotate;
+	public static PIDController turnControllerRotate2;
 
 
 	static double kPS = 0.085000;
@@ -63,6 +64,10 @@ public class Robot extends IterativeRobot implements PIDOutput  {
 //	static double kPR = 0.085000/7f;
 //	static double kIR = 0.008333/7f; //.001190
 //	static double kDR = 0.000200;
+	
+	static double kPT = 0.01;
+	static double kIT = 0.000;
+	static double kDT = 0;
 	
 	static double kToleranceDegrees = 1.0f;
 	double rotateToAngleRate = 0;
@@ -131,6 +136,14 @@ public class Robot extends IterativeRobot implements PIDOutput  {
 		turnControllerRotate.setAbsoluteTolerance(kToleranceDegrees);
 		turnControllerRotate.setContinuous(true);
 		turnControllerRotate.startLiveWindowMode();
+		
+		
+		turnControllerRotate2 = new PIDController(kPT,kIT,kDT,ahrs,this);
+		turnControllerRotate2.setInputRange(-180.0f,180.0f);
+		turnControllerRotate2.setOutputRange(-1.0, 1.0);
+		turnControllerRotate2.setAbsoluteTolerance(kToleranceDegrees);
+		turnControllerRotate2.setContinuous(true);
+		turnControllerRotate2.startLiveWindowMode();
 		
 		LiveWindow.addActuator("turnControllerStraight", "PID Table", turnControllerStraight);
 		LiveWindow.addActuator("Navx", "Ahrs", ahrs);
@@ -272,8 +285,6 @@ public class Robot extends IterativeRobot implements PIDOutput  {
     	}
     	startTime = System.nanoTime()/1000000000.;
     	turnControllerRotate.enable();
-    
-
     }
 	public void pidWrite(double output) {
 		
