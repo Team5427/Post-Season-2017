@@ -119,7 +119,7 @@ public class Robot extends IterativeRobot implements PIDOutput  {
 
 		turnControllerStraight = new PIDController(kPS, kIS, kDS, ahrs, this);
 		turnControllerStraight.setInputRange(-180.0f, 180.0f);
-		turnControllerStraight.setOutputRange(-.15, 0.15);
+		turnControllerStraight.setOutputRange(-1.0, -1.0);
 		turnControllerStraight.setAbsoluteTolerance(kToleranceDegrees);
 		turnControllerStraight.setContinuous(true);
 		turnControllerStraight.startLiveWindowMode();
