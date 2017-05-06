@@ -66,7 +66,7 @@ public class Robot extends IterativeRobot implements PIDOutput  {
 //	static double kDR = 0.000200;
 	
 	static double kPT = 0.01;
-	static double kIT = 0.000;
+	static double kIT = 0.00121; // .001
 	static double kDT = 0;
 	
 	static double kToleranceDegrees = 1.0f;
@@ -138,12 +138,13 @@ public class Robot extends IterativeRobot implements PIDOutput  {
 		turnControllerRotate.startLiveWindowMode();
 		
 		
-		turnControllerRotate2 = new PIDController(kPT,kIT,kDT,ahrs,this);
+		turnControllerRotate2 = new PIDController(kPT, kIT, kDT, ahrs, this);
 		turnControllerRotate2.setInputRange(-180.0f,180.0f);
-		turnControllerRotate2.setOutputRange(-1.0, 1.0);
+		turnControllerRotate2.setOutputRange(-0.5, 0.5);
 		turnControllerRotate2.setAbsoluteTolerance(kToleranceDegrees);
 		turnControllerRotate2.setContinuous(true);
 		turnControllerRotate2.startLiveWindowMode();
+		turnControllerRotate2.disable();
 		
 		LiveWindow.addActuator("turnControllerStraight", "PID Table", turnControllerStraight);
 		LiveWindow.addActuator("Navx", "Ahrs", ahrs);
@@ -219,10 +220,14 @@ public class Robot extends IterativeRobot implements PIDOutput  {
      		driveTrain.robotDrive4.setLeftRightMotorOutputs(-(currentRotationRate), currentRotationRate);
      		System.out.println(currentRotationRate);
         	turnControllerRotate.setSetpoint(setPoint);
+        	turnControllerRotate2.setSetpoint(setPoint);
         	
-/*        	if (ahrs.getYaw() > 85f) {
-        		turnControllerRotate.setPID(kPR, 0.001, kDR);
-        	}*/
+        	if (ahrs.getYaw() > 85f && turnControllerRotate.getI() != kIT) {
+        		turnControllerRotate.reset();
+        		turnControllerRotate.setPID(kPR, kIT, kDR);
+        		turnControllerRotate.enable();
+        		//turnControllerRotate2.enable();
+        	}
         	
 //    		if(setPoint<90)
 //    			setPoint+=.9;
