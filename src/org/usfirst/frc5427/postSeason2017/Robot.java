@@ -127,7 +127,7 @@ public class Robot extends IterativeRobot implements PIDOutput  {
 
 		turnControllerRotate = new PIDController(kPR, kIR, kDR, ahrs, this);
 		turnControllerRotate.setInputRange(-180.0f, 180.0f);
-		turnControllerRotate.setOutputRange(-1.0, 1.0);
+		turnControllerRotate.setOutputRange(-0.5, 0.5);
 		turnControllerRotate.setAbsoluteTolerance(kToleranceDegrees);
 		turnControllerRotate.setContinuous(true);
 		turnControllerRotate.startLiveWindowMode();
@@ -207,9 +207,9 @@ public class Robot extends IterativeRobot implements PIDOutput  {
      		System.out.println(currentRotationRate);
         	turnControllerRotate.setSetpoint(setPoint);
         	
-        	if (ahrs.getYaw() > 85f) {
+/*        	if (ahrs.getYaw() > 85f) {
         		turnControllerRotate.setPID(kPR, 0.001, kDR);
-        	}
+        	}*/
         	
 //    		if(setPoint<90)
 //    			setPoint+=.9;
