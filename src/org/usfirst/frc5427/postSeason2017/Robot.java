@@ -53,11 +53,11 @@ public class Robot extends IterativeRobot implements PIDOutput  {
 	static double kDS = 0.001042;
 	
 	//Needs to be tuned
-	static double kPR = 0.01;
-	static double kIR = 0.000; //.001190
-//	static double kIR = 0.001; //.001190		// tuned
+	static double kPR = 0.006;
+//	static double kIR = 0.000; //.001190
+	static double kIR = 0.03; //.0001		// tuned
 //	static double kIR = 0.001190; //.001190
-	static double kDR = 0;
+	static double kDR = 0.13;
 //	static double kDR = 0.001875;	// old tuned
 //	static double kDR = 0.000200;
 	
@@ -215,19 +215,24 @@ public class Robot extends IterativeRobot implements PIDOutput  {
     		 SmartDashboard.putNumber("Yaw Textbox" , ahrs.getYaw());
     		 SmartDashboard.putNumber("Yaw: ", ahrs.getYaw());
     		 SmartDashboard.putNumber("Setpoint: ", setPoint);
+    		 SmartDashboard.putNumber("P: ", kPR);
+    		 SmartDashboard.putNumber("I: ", kIR);
+    		 SmartDashboard.putNumber("D: ", kDR);
     		
 //    		driveTrain.robotDrive4.drive(-.3, 0);
      		driveTrain.robotDrive4.setLeftRightMotorOutputs(-(currentRotationRate), currentRotationRate);
      		System.out.println(currentRotationRate);
         	turnControllerRotate.setSetpoint(setPoint);
-        	turnControllerRotate2.setSetpoint(setPoint);
         	
-        	if (ahrs.getYaw() > 85f && turnControllerRotate.getI() != kIT) {
+        	// For 2nd PID loop
+        	//turnControllerRotate2.setSetpoint(setPoint);
+        	
+/*        	if (ahrs.getYaw() > 85f && turnControllerRotate.getI() != kIT) {
         		turnControllerRotate.reset();
         		turnControllerRotate.setPID(kPR, kIT, kDR);
         		turnControllerRotate.enable();
         		//turnControllerRotate2.enable();
-        	}
+        	}*/
         	
 //    		if(setPoint<90)
 //    			setPoint+=.9;
