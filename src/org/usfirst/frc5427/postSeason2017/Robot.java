@@ -53,11 +53,11 @@ public class Robot extends IterativeRobot implements PIDOutput  {
 	static double kDS = 0.001042;
 	
 	//Needs to be tuned
-	static double kPR = 0.006;
+	static double kPR = 0.004;
 //	static double kIR = 0.000; //.001190
-	static double kIR = 0.03; //.0001		// tuned
+	static double kIR = 0.022; //.0001		// tuned
 //	static double kIR = 0.001190; //.001190
-	static double kDR = 0.13;
+	static double kDR = 0.129;
 //	static double kDR = 0.001875;	// old tuned
 //	static double kDR = 0.000200;
 	
@@ -218,6 +218,7 @@ public class Robot extends IterativeRobot implements PIDOutput  {
     		 SmartDashboard.putNumber("P: ", kPR);
     		 SmartDashboard.putNumber("I: ", kIR);
     		 SmartDashboard.putNumber("D: ", kDR);
+    		 SmartDashboard.putNumber("Yaw and Setpoint Difference: ", setPoint - ahrs.getYaw());
     		
 //    		driveTrain.robotDrive4.drive(-.3, 0);
      		driveTrain.robotDrive4.setLeftRightMotorOutputs(-(currentRotationRate), currentRotationRate);
