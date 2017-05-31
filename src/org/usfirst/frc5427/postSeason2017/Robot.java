@@ -46,6 +46,9 @@ public class Robot extends IterativeRobot implements PIDOutput  {
 	public static PIDController turnControllerRotate;
 	public static PIDController turnControllerRotate2;
 
+	 public double rightMotorSpeed = 0;
+	 public double setPoint = 0;
+
 
 	static double kPS = 0.085000;
 	static double kIS = 0.008333;
@@ -53,13 +56,13 @@ public class Robot extends IterativeRobot implements PIDOutput  {
 	static double kDS = 0.001042;
 	
 	//Needs to be tuned
-	static double kPR = 0.004;
+	static double kPR = 0.01;
 //	static double kIR = 0.000; //.001190
-	static double kIR = 0.022; //.0001		// tuned
+	static double kIR = 0.0005; //.0001		// tuned
 //	static double kIR = 0.001190; //.001190
-	static double kDR = 0.129;
-//	static double kDR = 0.001875;	// old tuned
-//	static double kDR = 0.000200;
+	static double kDR = 0.05;
+	
+//	static double kDR = 0.129;	
 	
 //	static double kPR = 0.085000/7f;
 //	static double kIR = 0.008333/7f; //.001190
@@ -132,7 +135,7 @@ public class Robot extends IterativeRobot implements PIDOutput  {
 
 		turnControllerRotate = new PIDController(kPR, kIR, kDR, ahrs, this);
 		turnControllerRotate.setInputRange(-180.0f, 180.0f);
-		turnControllerRotate.setOutputRange(-0.5, 0.5);
+		turnControllerRotate.setOutputRange(-1, 1);
 		turnControllerRotate.setAbsoluteTolerance(kToleranceDegrees);
 		turnControllerRotate.setContinuous(true);
 		turnControllerRotate.startLiveWindowMode();
@@ -196,9 +199,7 @@ public class Robot extends IterativeRobot implements PIDOutput  {
         Scheduler.getInstance().run();
     }
 
-    double rightMotorSpeed = 0;
-    double setPoint = 0;
-	boolean b = true;
+   
     /**
      * This function is called periodically during test mode - around 50 times a second
      */
@@ -286,7 +287,7 @@ public class Robot extends IterativeRobot implements PIDOutput  {
     {
     	setPoint = 0;
     	rightMotorSpeed = 0;
-    	b=true;
+    	
     	turnControllerRotate.setSetpoint(0);
     	ahrs.reset();
     	try {
