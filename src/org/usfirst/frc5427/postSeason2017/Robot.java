@@ -47,7 +47,7 @@ public class Robot extends IterativeRobot implements PIDOutput  {
 	public static PIDController turnControllerRotate2;
 
 	 public double rightMotorSpeed = 0;
-	 public double setPoint = 0;
+	 public double setpoint = 0;
 
 
 	static double kPS = 0.085000;
@@ -58,7 +58,7 @@ public class Robot extends IterativeRobot implements PIDOutput  {
 //	static double kPR = 0.01;
 	static double kPR = 0.01;
 //	static double kIR = 0.0005; 
-	static double kIR = 0.0005;
+	static double kIR = 0.0002;
 //	static double kDR = 0.05;
 	static double kDR = 0.06;
 	
@@ -73,10 +73,16 @@ public class Robot extends IterativeRobot implements PIDOutput  {
 	float startYaw = 0;
 	static double startTime;
 	
-	static double targetYaw=90;
+	static double targetYaw=150;
 	static int countsBtwnTenths=2;
 	static int counter=0;
 	static double rampedSetpoint;
+	
+	static boolean timeLoop;
+	static long loopPreviousTime;
+	static long loopCurrentTime;
+	static long targetTime;
+	
 	//static boolean negative;
 	//TODO research motion profiling
 	
@@ -84,7 +90,10 @@ public class Robot extends IterativeRobot implements PIDOutput  {
 	{
 //		double curYaw=ahrs.getYaw();
 		if(desiredSetPoint<=rampedSetpoint)
+		{
+			rampedSetpoint = desiredSetPoint;
 			return false;
+		}
 		rampedSetpoint+=2;
 		SmartDashboard.putNumber("RampedSetpoint", rampedSetpoint);
 
@@ -218,20 +227,36 @@ public class Robot extends IterativeRobot implements PIDOutput  {
     
     public void testInit()
     {
-    	setPoint = 0;
-    	rightMotorSpeed = 0;
-    	
-    	turnControllerRotate.setSetpoint(0);
     	ahrs.reset();
-    	try {
+    	turnControllerStraight.setSetpoint(0);
+    	try
+    	{
     		Thread.sleep(500);
-    	} catch (Exception e) {
+    	}
+    	catch(Exception e)
+    	{
     		e.printStackTrace();
     	}
     	startTime = System.nanoTime()/1000000000.;
-    	turnControllerRotate.enable();
-    	rampedSetpoint=ahrs.getYaw();
-    	counter=0;
+    	rightMotorSpeed = 0;
+    	turnControllerStraight.enable();
+//    	setPoint = 0;
+//    	rightMotorSpeed = 0;
+//    	
+//    	turnControllerRotate.setSetpoint(0);
+//    	ahrs.reset();
+//    	try {
+//    		Thread.sleep(500);
+//    	} catch (Exception e) {
+//    		e.printStackTrace();
+//    	}
+//    	startTime = System.nanoTime()/1000000000.;
+//    	turnControllerRotate.enable();
+//    	rampedSetpoint=ahrs.getYaw();
+////    	counter=0;
+//    	
+//    	targetTime = 40000000;
+//    	loopPreviousTime = System.nanoTime();
     }
 
    
@@ -239,87 +264,151 @@ public class Robot extends IterativeRobot implements PIDOutput  {
      * This function is called periodically during test mode - around 50 times a second
      */
     public void testPeriodic() {
-    	counter++;
     	double currentRotationRate = rotateToAngleRate;
-    	//SmartDashboard.putNumber("RampedSetpoint", currentManualRampingSetpoint);
-    	if(counter>=countsBtwnTenths)
-    	{   		
-    		if(ramp(targetYaw))
-    			counter=0;
-    	}
-		
-    	if(System.nanoTime()/1000000000. - startTime < 4)
+    	
+    	SmartDashboard.putNumber("PID Output: ", rotateToAngleRate);
+		 SmartDashboard.putNumber("Yaw Textbox" , ahrs.getYaw());
+		 SmartDashboard.putNumber("Yaw: ", ahrs.getYaw());
+		 SmartDashboard.putNumber("Setpoint: ", setpoint);
+//		 SmartDashboard.putNumber("P: ", kPR);
+//		 SmartDashboard.putNumber("I: ", kIR);
+//		 SmartDashboard.putNumber("D: ", kDR);
+		 SmartDashboard.putNumber("Yaw and Setpoint Difference: ", setpoint - ahrs.getYaw());
+//		 SmartDashboard.putNumber("RampedSetpoint", rampedSetpoint);
+    	//Code for straight
+    	if(System.nanoTime()/1000000000. - startTime<=4)
     	{
-    		setPoint = 90;
-    		
-    		 SmartDashboard.putNumber("PID Output: ", rotateToAngleRate);
-    		 SmartDashboard.putNumber("Yaw Textbox" , ahrs.getYaw());
-    		 SmartDashboard.putNumber("Yaw: ", ahrs.getYaw());
-    		 SmartDashboard.putNumber("Setpoint: ", setPoint);
-    		 SmartDashboard.putNumber("P: ", kPR);
-    		 SmartDashboard.putNumber("I: ", kIR);
-    		 SmartDashboard.putNumber("D: ", kDR);
-    		 SmartDashboard.putNumber("Yaw and Setpoint Difference: ", setPoint - ahrs.getYaw());
-    		 SmartDashboard.putNumber("RampedSetpoint", rampedSetpoint);
-    		 
-    		 
-    		
-//    		driveTrain.robotDrive4.drive(-.3, 0);
-     		driveTrain.robotDrive4.setLeftRightMotorOutputs(-(currentRotationRate), currentRotationRate);
-     		System.out.println(currentRotationRate);
-        	turnControllerRotate.setSetpoint(setPoint);
-        	
-        	// For 2nd PID loop
-        	//turnControllerRotate2.setSetpoint(setPoint);
-        	
-/*        	if (ahrs.getYaw() > 85f && turnControllerRotate.getI() != kIT) {
-        		turnControllerRotate.reset();
-        		turnControllerRotate.setPID(kPR, kIT, kDR);
-        		turnControllerRotate.enable();
-        		//turnControllerRotate2.enable();
-        	}*/
-        	
-//    		if(setPoint<90)
-//    			setPoint+=.9;
-//    		
-//    		if(setPoint>90)
-//    			setPoint = 90;
-//    		if(rightMotorSpeed>-.3)
-//    			rightMotorSpeed-=0.006;
-//    		
-//    		if(rightMotorSpeed<-.3)
-//    			rightMotorSpeed = -.3;
-    	}
-//    	else if(System.nanoTime()/1000000000. - startTime < 4)
-//    	{
-//    		if(b)
+    		driveTrain.robotDrive4.setLeftRightMotorOutputs(-(currentRotationRate),-.3);
+//    		if(rightMotorSpeed > -.3)
 //    		{
-//        		turnControllerStraight.disable();
-//        		turnControllerStraight.stopLiveWindowMode();
-//        		turnControllerRotate.enable();
+//    			rightMotorSpeed-=.006;
 //    		}
-//    		
-//   		 	SmartDashboard.putNumber("PID Output: ", rotateToAngleRate);
-//   		 	SmartDashboard.putNumber("Yaw: ", ahrs.getYaw());
-//
-//     		driveTrain.robotDrive4.setLeftRightMotorOutputs(-(currentRotationRate), rightMotorSpeed);
-//     		
-//        	turnControllerRotate.setSetpoint(setPoint);
-//        	
-//    		if(setPoint<90)
-//    			setPoint+=.9;
-//    		
-//    		if(setPoint>90)
-//    			setPoint = 90;
-//    		
-//    		b = false;
-//    	}
-    	else
-    	{
-    		turnControllerRotate.disable();
-    		turnControllerRotate.stopLiveWindowMode();
-    		driveTrain.stop();
+//    		if(rightMotorSpeed<-.3)
+//    		{
+//    			rightMotorSpeed = -.3;
+//    		}
     	}
+    	else if(System.nanoTime()/1000000000.-startTime<=8)
+    	{
+    		if(turnControllerStraight.isEnabled())
+    		{
+    			turnControllerStraight.disable();
+    			turnControllerRotate.enable();
+    			targetTime = 40000000;
+    			loopPreviousTime = System.nanoTime();
+    			rampedSetpoint = ahrs.getYaw();
+    			targetYaw = 90;
+    		}
+    		loopCurrentTime = System.nanoTime();
+    		if(loopCurrentTime-loopPreviousTime>=targetTime)
+    		{
+    			ramp(targetYaw);
+    			loopPreviousTime = loopCurrentTime;
+    		}
+    		driveTrain.robotDrive4.drive(-.3,0);
+    		driveTrain.robotDrive4.setLeftRightMotorOutputs(-currentRotationRate, currentRotationRate);
+    		turnControllerRotate.setSetpoint(rampedSetpoint);
+    	}
+    	else if(System.nanoTime()/1000000000.-startTime<=12)
+    	{
+    		if(turnControllerRotate.isEnabled())
+    		{
+    			turnControllerRotate.disable();
+    			turnControllerStraight.enable();
+    		}
+    		driveTrain.robotDrive4.drive(.3,currentRotationRate);
+    	}
+    	
+    	
+    	
+//    	
+////    	counter++;
+//    	double currentRotationRate = rotateToAngleRate;
+//    	//SmartDashboard.putNumber("RampedSetpoint", currentManualRampingSetpoint);
+////    	if(counter>=countsBtwnTenths)
+////    	{   		
+////    		if(ramp(targetYaw))
+////    			counter=0;
+////    	}
+//    	
+//    	loopCurrentTime = System.nanoTime();
+//    	if(loopCurrentTime-loopPreviousTime>=targetTime)
+//    	{
+//    			ramp(targetYaw);
+//    			loopPreviousTime = loopCurrentTime;
+//    	}
+//    	if(System.nanoTime()/1000000000. - startTime < 4)
+//    	{
+////    		setPoint = 90;
+//    		
+//    		 SmartDashboard.putNumber("PID Output: ", rotateToAngleRate);
+//    		 SmartDashboard.putNumber("Yaw Textbox" , ahrs.getYaw());
+//    		 SmartDashboard.putNumber("Yaw: ", ahrs.getYaw());
+////    		 SmartDashboard.putNumber("Setpoint: ", setPoint);
+//    		 SmartDashboard.putNumber("P: ", kPR);
+//    		 SmartDashboard.putNumber("I: ", kIR);
+//    		 SmartDashboard.putNumber("D: ", kDR);
+//    		 SmartDashboard.putNumber("Yaw and Setpoint Difference: ", setPoint - ahrs.getYaw());
+//    		 SmartDashboard.putNumber("RampedSetpoint", rampedSetpoint);
+//    		 
+//    		 
+//    		
+////    		driveTrain.robotDrive4.drive(-.3, 0);
+//     		driveTrain.robotDrive4.setLeftRightMotorOutputs(-(currentRotationRate), currentRotationRate);
+//     		System.out.println(currentRotationRate);
+//        	turnControllerRotate.setSetpoint(rampedSetpoint); //setPoint
+//        	
+//        	// For 2nd PID loop
+//        	//turnControllerRotate2.setSetpoint(setPoint);
+//        	
+///*        	if (ahrs.getYaw() > 85f && turnControllerRotate.getI() != kIT) {
+//        		turnControllerRotate.reset();
+//        		turnControllerRotate.setPID(kPR, kIT, kDR);
+//        		turnControllerRotate.enable();
+//        		//turnControllerRotate2.enable();
+//        	}*/
+//        	
+////    		if(setPoint<90)
+////    			setPoint+=.9;
+////    		
+////    		if(setPoint>90)
+////    			setPoint = 90;
+////    		if(rightMotorSpeed>-.3)
+////    			rightMotorSpeed-=0.006;
+////    		
+////    		if(rightMotorSpeed<-.3)
+////    			rightMotorSpeed = -.3;
+//    	}
+////    	else if(System.nanoTime()/1000000000. - startTime < 4)
+////    	{
+////    		if(b)
+////    		{
+////        		turnControllerStraight.disable();
+////        		turnControllerStraight.stopLiveWindowMode();
+////        		turnControllerRotate.enable();
+////    		}
+////    		
+////   		 	SmartDashboard.putNumber("PID Output: ", rotateToAngleRate);
+////   		 	SmartDashboard.putNumber("Yaw: ", ahrs.getYaw());
+////
+////     		driveTrain.robotDrive4.setLeftRightMotorOutputs(-(currentRotationRate), rightMotorSpeed);
+////     		
+////        	turnControllerRotate.setSetpoint(setPoint);
+////        	
+////    		if(setPoint<90)
+////    			setPoint+=.9;
+////    		
+////    		if(setPoint>90)
+////    			setPoint = 90;
+////    		
+////    		b = false;
+////    	}
+//    	else
+//    	{
+//    		turnControllerRotate.disable();
+//    		turnControllerRotate.stopLiveWindowMode();
+//    		driveTrain.stop();
+//    	}
     	
     	
     	
