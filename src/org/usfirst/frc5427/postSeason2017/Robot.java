@@ -152,7 +152,7 @@ public class Robot extends IterativeRobot implements PIDOutput  {
 
 		turnControllerStraight = new PIDController(kPS, kIS, kDS, ahrs, this);
 		turnControllerStraight.setInputRange(-180.0f, 180.0f);
-		turnControllerStraight.setOutputRange(-1.0, -1.0);
+		turnControllerStraight.setOutputRange(-1.0, 1.0);
 		turnControllerStraight.setAbsoluteTolerance(kToleranceDegrees);
 		turnControllerStraight.setContinuous(true);
 		turnControllerStraight.startLiveWindowMode();
@@ -228,7 +228,7 @@ public class Robot extends IterativeRobot implements PIDOutput  {
     public void testInit()
     {
     	ahrs.reset();
-    	turnControllerStraight.setSetpoint(0);
+    	//turnControllerStraight.setSetpoint(0);
     	try
     	{
     		Thread.sleep(500);
@@ -276,19 +276,19 @@ public class Robot extends IterativeRobot implements PIDOutput  {
 		 SmartDashboard.putNumber("Yaw and Setpoint Difference: ", setpoint - ahrs.getYaw());
 //		 SmartDashboard.putNumber("RampedSetpoint", rampedSetpoint);
     	//Code for straight
-    	if(System.nanoTime()/1000000000. - startTime<=4)
+    	if(System.nanoTime()/1000000000.-startTime<3.85)
     	{
-    		driveTrain.robotDrive4.setLeftRightMotorOutputs(-(currentRotationRate),-.3);
-//    		if(rightMotorSpeed > -.3)
-//    		{
-//    			rightMotorSpeed-=.006;
-//    		}
-//    		if(rightMotorSpeed<-.3)
-//    		{
-//    			rightMotorSpeed = -.3;
-//    		}
+    		driveTrain.robotDrive4.setLeftRightMotorOutputs(-(currentRotationRate),rightMotorSpeed);
+    		if(rightMotorSpeed > -.3)
+    		{
+    			rightMotorSpeed-=.006;
+    		}
+    		if(rightMotorSpeed<-.3)
+    		{
+    			rightMotorSpeed = -.3;
+    		}
     	}
-    	else if(System.nanoTime()/1000000000.-startTime<=8)
+    	else if(System.nanoTime()/1000000000.-startTime<7.85)
     	{
     		if(turnControllerStraight.isEnabled())
     		{
@@ -298,6 +298,7 @@ public class Robot extends IterativeRobot implements PIDOutput  {
     			loopPreviousTime = System.nanoTime();
     			rampedSetpoint = ahrs.getYaw();
     			targetYaw = 90;
+    			rightMotorSpeed = 0;
     		}
     		loopCurrentTime = System.nanoTime();
     		if(loopCurrentTime-loopPreviousTime>=targetTime)
@@ -309,14 +310,28 @@ public class Robot extends IterativeRobot implements PIDOutput  {
     		driveTrain.robotDrive4.setLeftRightMotorOutputs(-currentRotationRate, currentRotationRate);
     		turnControllerRotate.setSetpoint(rampedSetpoint);
     	}
-    	else if(System.nanoTime()/1000000000.-startTime<=12)
+    	else if(System.nanoTime()/1000000000.-startTime<10.9)
     	{
     		if(turnControllerRotate.isEnabled())
     		{
     			turnControllerRotate.disable();
     			turnControllerStraight.enable();
+    			ahrs.reset();
     		}
-    		driveTrain.robotDrive4.drive(.3,currentRotationRate);
+    		driveTrain.robotDrive4.setLeftRightMotorOutputs(-(currentRotationRate),rightMotorSpeed);
+    		if(rightMotorSpeed > -.3)
+    		{
+    			rightMotorSpeed-=.006;
+    		}
+    		if(rightMotorSpeed<-.3)
+    		{
+    			rightMotorSpeed = -.3;
+    		}
+    	}
+    	else
+    	{
+    		turnControllerStraight.disable();
+    		driveTrain.stop();
     	}
     	
     	
