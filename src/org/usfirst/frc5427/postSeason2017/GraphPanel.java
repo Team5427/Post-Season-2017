@@ -1,4 +1,4 @@
-package src;
+package org.usfirst.frc5427.postSeason2017;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -24,7 +24,8 @@ import javax.swing.SwingUtilities;
  * @author Andrew
  */
 public class GraphPanel extends JPanel {
-	public static final int lines = 2;
+	public static final int numLines = 2;
+	private static ArrayList<ArrayList<Double>> linesColl = new ArrayList<ArrayList<Double>>(numLines);
     private int width = 800;
     private int heigth = 400;
     private int padding = 25;
@@ -41,11 +42,8 @@ public class GraphPanel extends JPanel {
         this.scores = scores;
     }
 
-    public static void addLines(int numLines, List<Double> lines){
-    	
-		for(int i = 0; i < numLines; i++){
-			
-		}
+    public static void addLines(int lineNumber, List<Double> lines){
+    	 linesColl.set(lineNumber, (ArrayList<Double>) lines);
 	}
     
     @Override
@@ -171,10 +169,10 @@ public class GraphPanel extends JPanel {
         Random random = new Random();
         int maxDataPoints = 60;
         int maxScore = 100;
-        for(int j = 0; j < lines; j++){
+        for(int j = 0; j < numLines; j++){
         	for (int i = 0; i < maxDataPoints; i++) {
             scores.add((double) random.nextDouble() * maxScore);
-            addLines(lines, scores);
+            addLines(j, scores);
 //            scores.add((double) i);
         	}
         }
