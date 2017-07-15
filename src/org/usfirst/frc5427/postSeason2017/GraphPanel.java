@@ -42,7 +42,7 @@ public class GraphPanel extends JPanel {
         this.scores = scores;
     }
 
-    public static void addLines(int lineNumber, List<Double> lines){
+    public static void addLines(int lineNumber, List<Double> lines) {
     	 linesColl.set(lineNumber, (ArrayList<Double>) lines);
 	}
     
