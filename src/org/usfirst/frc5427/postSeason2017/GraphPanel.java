@@ -1,4 +1,5 @@
 package org.usfirst.frc5427.postSeason2017;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -43,7 +44,13 @@ public class GraphPanel extends JPanel {
     }
 
     public static void addLines(int lineNumber, List<Double> lines){
-    	 linesColl.set(lineNumber, (ArrayList<Double>) lines);
+    	 linesColl.add(lineNumber, (ArrayList<Double>) lines);
+    	 System.out.println("\n\nLine number: " + lineNumber + "\n---------");
+    	 for(int i = 0;i < lines.size(); i++){
+    		 System.out.println(lines.get(i));
+    	 }
+    	 
+    	// System.out.print(linesColl.size());
 	}
     
     @Override
@@ -172,9 +179,9 @@ public class GraphPanel extends JPanel {
         for(int j = 0; j < numLines; j++){
         	for (int i = 0; i < maxDataPoints; i++) {
             scores.add((double) random.nextDouble() * maxScore);
-            addLines(j, scores);
+            
 //            scores.add((double) i);
-        	}
+        	}addLines(j, scores);
         }
         
         GraphPanel mainPanel = new GraphPanel(scores);
