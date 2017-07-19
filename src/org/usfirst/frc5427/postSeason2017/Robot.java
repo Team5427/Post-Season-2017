@@ -12,6 +12,7 @@
 package org.usfirst.frc5427.postSeason2017;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
@@ -45,6 +46,8 @@ public class Robot extends IterativeRobot implements PIDOutput  {
 	public static PIDController turnControllerStraight;
 	public static PIDController turnControllerRotate;
 	public static PIDController turnControllerRotate2;
+	public static Encoder encoderLeft;
+	public static Encoder encoderRight;
 
 	 public double rightMotorSpeed = 0;
 	 public double setpoint = 0;

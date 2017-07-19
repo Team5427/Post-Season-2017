@@ -43,6 +43,7 @@ public class GraphPanel extends JPanel {
         this.scores = scores;
     }
 
+
     public static void addLines(int lineNumber, List<Double> lines){
     	 linesColl.add(lineNumber, (ArrayList<Double>) lines);
     	 System.out.println("\n\nLine number: " + lineNumber + "\n---------");
@@ -51,8 +52,7 @@ public class GraphPanel extends JPanel {
     	 }
     	
     	 System.out.print(linesColl.get(lineNumber).size());
-    	
-	}
+    }
     
     @Override
     protected void paintComponent(Graphics g) {
