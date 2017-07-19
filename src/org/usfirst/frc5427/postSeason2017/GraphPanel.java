@@ -47,10 +47,11 @@ public class GraphPanel extends JPanel {
     	 linesColl.add(lineNumber, (ArrayList<Double>) lines);
     	 System.out.println("\n\nLine number: " + lineNumber + "\n---------");
     	 for(int i = 0;i < lines.size(); i++){
-    		 System.out.println(lines.get(i));
+    	 	System.out.println(lines.get(i));
     	 }
-    	 
-    	// System.out.print(linesColl.size());
+    	
+    	 System.out.print(linesColl.get(lineNumber).size());
+    	
 	}
     
     @Override
@@ -61,14 +62,18 @@ public class GraphPanel extends JPanel {
 
         double xScale = ((double) getWidth() - (2 * padding) - labelPadding) / (scores.size() - 1);
         double yScale = ((double) getHeight() - 2 * padding - labelPadding) / (getMaxScore() - getMinScore());
-
-        List<Point> graphPoints = new ArrayList<>();
-        for (int i = 0; i < scores.size(); i++) {
-            int x1 = (int) (i * xScale + padding + labelPadding);
-            int y1 = (int) ((getMaxScore() - scores.get(i)) * yScale + padding);
-            graphPoints.add(new Point(x1, y1));
+        
+        
+        //List<Point> graphPoints = new ArrayList<>();
+        ArrayList<List<Point>> graphPoints = new ArrayList<List<Point>>(linesColl.size());
+        for(int j = 0; j < linesColl.size(); j++){	
+        	graphPoints.add(j, new ArrayList<Point>());
+        	for (int i = 0; i < linesColl.get(j).size(); i++) {
+        		int x1 = (int) (i * xScale + padding + labelPadding);
+        		int y1 = (int) ((getMaxScore() - linesColl.get(j).get(i)) * yScale + padding);
+        		graphPoints.get(j).add(new Point(x1, y1));
+        	}//System.out.print(graphPoints.size());
         }
-
         // draw white background
         g2.setColor(Color.WHITE);
         g2.fillRect(padding + labelPadding, padding, getWidth() - (2 * padding) - labelPadding, getHeight() - 2 * padding - labelPadding);
@@ -115,28 +120,35 @@ public class GraphPanel extends JPanel {
         // create x and y axes 
         g2.drawLine(padding + labelPadding, getHeight() - padding - labelPadding, padding + labelPadding, padding);
         g2.drawLine(padding + labelPadding, getHeight() - padding - labelPadding, getWidth() - padding, getHeight() - padding - labelPadding);
-
+        //Draw lines here
         Stroke oldStroke = g2.getStroke();
-        g2.setColor(lineColor);
-        g2.setStroke(GRAPH_STROKE);
-        for (int i = 0; i < graphPoints.size() - 1; i++) {
-            int x1 = graphPoints.get(i).x;
-            int y1 = graphPoints.get(i).y;
-            int x2 = graphPoints.get(i + 1).x;
-            int y2 = graphPoints.get(i + 1).y;
-            g2.drawLine(x1, y1, x2, y2);
+        for(int j = 0; j < linesColl.size(); j++){
+        	g2.setColor(lineColor);
+        	g2.setStroke(GRAPH_STROKE);
+        	//LINES
+        	for (int i = 0; i < graphPoints.get(j).size() - 1; i++) {
+        		int x1 = graphPoints.get(j).get(i).x;
+        		int y1 = graphPoints.get(j).get(i).y;
+        		int x2 = graphPoints.get(j).get(i + 1).x;
+        		int y2 = graphPoints.get(j).get(i + 1).y;
+        		g2.drawLine(x1, y1, x2, y2);
+        	}
+        	//System.out.println(j);
         }
-
-        g2.setStroke(oldStroke);
-        g2.setColor(pointColor);
-        for (int i = 0; i < graphPoints.size(); i++) {
-            int x = graphPoints.get(i).x - pointWidth / 2;
-            int y = graphPoints.get(i).y - pointWidth / 2;
-            int ovalW = pointWidth;
-            int ovalH = pointWidth;
-            g2.fillOval(x, y, ovalW, ovalH);
-        }
-    }
+	    for(int j = 0; j < linesColl.size(); j++){
+	        	//POINT
+	    	g2.setStroke(oldStroke);
+	        g2.setColor(pointColor);
+	        for (int i = 0; i < graphPoints.get(j).size(); i++) {
+	        		int x = graphPoints.get(j).get(i).x - pointWidth / 2;
+	        		int y = graphPoints.get(j).get(i).y - pointWidth / 2;
+	        		int ovalW = pointWidth;
+	        		int ovalH = pointWidth;
+	        		g2.fillOval(x, y, ovalW, ovalH);
+	        	}
+	        }
+	    }
+    
 
 //    @Override
 //    public Dimension getPreferredSize() {
@@ -145,7 +157,10 @@ public class GraphPanel extends JPanel {
 
     private double getMinScore() {
         double minScore = Double.MAX_VALUE;
-        for (Double score : scores) {
+        for (Double score : linesColl.get(0)) {
+            minScore = Math.min(minScore, score);
+        }
+        for (Double score : linesColl.get(1)) {
             minScore = Math.min(minScore, score);
         }
         return minScore;
@@ -153,35 +168,42 @@ public class GraphPanel extends JPanel {
 
     private double getMaxScore() {
         double maxScore = Double.MIN_VALUE;
-        for (Double score : scores) {
+        for (Double score : linesColl.get(0)) {
+            maxScore = Math.max(maxScore, score);
+        }
+        for (Double score : linesColl.get(1)) {
             maxScore = Math.max(maxScore, score);
         }
         return maxScore;
     }
-
+/*
     public void setScores(List<Double> scores) {
         this.scores = scores;
         invalidate();
         this.repaint();
     }
-
+    */
+/*
     public List<Double> getScores() {
         return scores;
     }
-    
+   */ 
     private static void createAndShowGui() {
         List<Double> scores = new ArrayList<>();
         
         //TODO: replace values
-        Random random = new Random();
-        int maxDataPoints = 60;
+        int maxDataPoints = 40;
         int maxScore = 100;
+        double[] allPoints = new double[numLines * maxDataPoints];
         for(int j = 0; j < numLines; j++){
+        	scores.clear();
         	for (int i = 0; i < maxDataPoints; i++) {
-            scores.add((double) random.nextDouble() * maxScore);
-            
+        		allPoints[j*maxDataPoints+i] = Math.random()*maxScore;
+        		scores.add(allPoints[j*maxDataPoints+i]);
 //            scores.add((double) i);
-        	}addLines(j, scores);
+        	}
+        	addLines(j, scores);
+        	
         }
         
         GraphPanel mainPanel = new GraphPanel(scores);
