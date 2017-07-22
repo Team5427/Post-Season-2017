@@ -31,7 +31,8 @@ public class GraphPanel extends JPanel {
 	private int heigth = 400;
 	private int padding = 25;
 	private int labelPadding = 25;
-	private Color lineColor = new Color(44, 102, 230, 180);
+	private Color line1Color = new Color(44, 102, 230, 180);
+	private Color line2Color = new Color(255,51,51,180);
 	private Color pointColor = new Color(100, 100, 100, 180);
 	private Color gridColor = new Color(200, 200, 200, 200);
 	private static final Stroke GRAPH_STROKE = new BasicStroke(2f);
@@ -125,9 +126,14 @@ public class GraphPanel extends JPanel {
 				getHeight() - padding - labelPadding);
 		// Draw lines here
 		Stroke oldStroke = g2.getStroke();
-		g2.setColor(lineColor);
+		g2.setColor(line1Color);
 		g2.setStroke(GRAPH_STROKE);
 		for (int j = 0; j < lines.size(); j++) {
+			if(j == 0)
+				g2.setColor(line1Color);
+			else
+				g2.setColor(line2Color);
+				
 			System.out.println("\nLine "+(j+1));
 			// LINES
 			for (int i = 0; i < graphPoints.get(j).size() - 1; i++) {
