@@ -263,7 +263,7 @@ public class Robot extends IterativeRobot implements PIDOutput {
 	public void testPeriodic() {
 		double currentRotationRate = rotateToAngleRate;
 		//TODO Change Values
-		graph.update(Math.random()*100, (int)(Math.random()*2));
+		graph.update(Math.random()*100, 0);
 		
 		SmartDashboard.putNumber("PID Output: ", rotateToAngleRate);
 		SmartDashboard.putNumber("Yaw Textbox", ahrs.getYaw());
