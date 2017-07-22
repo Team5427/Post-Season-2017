@@ -24,7 +24,7 @@ import javax.swing.SwingUtilities;
  *
  * @author Andrew
  */
-public class GraphPanel extends JPanel {
+public class GraphPanel extends JPanel implements Runnable {
 	public static final int numLines = 2;
 	private static ArrayList<ArrayList<Double>> lines = new ArrayList<ArrayList<Double>>(numLines);
 	private int width = 800;
@@ -32,7 +32,7 @@ public class GraphPanel extends JPanel {
 	private int padding = 25;
 	private int labelPadding = 25;
 	private Color line1Color = new Color(44, 102, 230, 180);
-	private Color line2Color = new Color(255,51,51,180);
+	private Color line2Color = new Color(255, 51, 51, 180);
 	private Color pointColor = new Color(100, 100, 100, 180);
 	private Color gridColor = new Color(200, 200, 200, 200);
 	private static final Stroke GRAPH_STROKE = new BasicStroke(2f);
@@ -40,8 +40,8 @@ public class GraphPanel extends JPanel {
 	private int numberYDivisions = 10;
 	private List<Double> scores;
 
-	public GraphPanel(List<Double> scores) {
-		this.scores = scores;
+	public GraphPanel() {
+		this.scores = createAndShowGui();
 	}
 
 	public static void addLines(int lineNumber, List<Double> linePoints) {
@@ -55,8 +55,8 @@ public class GraphPanel extends JPanel {
 	}
 
 	@Override
-	protected void paintComponent(Graphics g) {
-		super.paintComponent(g);
+	public void paint(Graphics g) {
+		super.paint(g);
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
@@ -129,22 +129,22 @@ public class GraphPanel extends JPanel {
 		g2.setColor(line1Color);
 		g2.setStroke(GRAPH_STROKE);
 		for (int j = 0; j < lines.size(); j++) {
-			if(j == 0)
+			if (j == 0)
 				g2.setColor(line1Color);
 			else
 				g2.setColor(line2Color);
-				
-			System.out.println("\nLine "+(j+1));
+
+			System.out.println("\nLine " + (j + 1));
 			// LINES
 			for (int i = 0; i < graphPoints.get(j).size() - 1; i++) {
 				int x1 = graphPoints.get(j).get(i).x;
-				System.out.println("x1: "+x1);
+				System.out.println("x1: " + x1);
 				int y1 = graphPoints.get(j).get(i).y;
-				System.out.println("y1: "+y1);
+				System.out.println("y1: " + y1);
 				int x2 = graphPoints.get(j).get(i + 1).x;
-				System.out.println("x2: "+x2);
+				System.out.println("x2: " + x2);
 				int y2 = graphPoints.get(j).get(i + 1).y;
-				System.out.println("y2: "+y2 +"\n");
+				System.out.println("y2: " + y2 + "\n");
 				g2.drawLine(x1, y1, x2, y2);
 			}
 			System.out.print("\n\n");
@@ -154,7 +154,7 @@ public class GraphPanel extends JPanel {
 		g2.setColor(pointColor);
 		for (int j = 0; j < lines.size(); j++) {
 			// POINT
-		
+
 			for (int i = 0; i < graphPoints.get(j).size(); i++) {
 				int x = graphPoints.get(j).get(i).x - pointWidth / 2;
 				int y = graphPoints.get(j).get(i).y - pointWidth / 2;
@@ -199,7 +199,7 @@ public class GraphPanel extends JPanel {
 	/*
 	 * public List<Double> getScores() { return scores; }
 	 */
-	private static void createAndShowGui() {
+	private static List<Double> createAndShowGui() {
 		List<Double> scores = new ArrayList<>();
 
 		// TODO: replace values
@@ -216,7 +216,7 @@ public class GraphPanel extends JPanel {
 			addLines(j, scores);
 		}
 
-		GraphPanel mainPanel = new GraphPanel(scores);
+		GraphPanel mainPanel = new GraphPanel();
 		mainPanel.setPreferredSize(new Dimension(800, 600));
 		JFrame frame = new JFrame("DrawGraph");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -224,13 +224,30 @@ public class GraphPanel extends JPanel {
 		frame.pack();
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
+		return scores;
+	}
+	// public static void main(String[] args) {
+	// SwingUtilities.invokeLater(new Runnable() {
+	// public void run() {
+	// createAndShowGui();
+	// }
+	// });
+	// }
+
+	public void update(double value, int line) {
+		lines.get(line).add(value);
 	}
 
-	public static void main(String[] args) {
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				createAndShowGui();
+	@Override
+	public void run() {
+		while (true) {
+
+			repaint();
+			try {
+				Thread.sleep(100);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-		});
+		}
 	}
 }
