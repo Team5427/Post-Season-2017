@@ -132,13 +132,13 @@ public class GraphPanel extends JPanel {
 			// LINES
 			for (int i = 0; i < graphPoints.get(j).size() - 1; i++) {
 				int x1 = graphPoints.get(j).get(i).x;
-//				System.out.println("x1: "+x1);
+				System.out.println("x1: "+x1);
 				int y1 = graphPoints.get(j).get(i).y;
-//				System.out.println("y1: "+y1);
+				System.out.println("y1: "+y1);
 				int x2 = graphPoints.get(j).get(i + 1).x;
-//				System.out.println("x2: "+x2);
+				System.out.println("x2: "+x2);
 				int y2 = graphPoints.get(j).get(i + 1).y;
-//				System.out.println("y2: "+y2 +"\n");
+				System.out.println("y2: "+y2 +"\n");
 				g2.drawLine(x1, y1, x2, y2);
 			}
 			System.out.print("\n\n");
@@ -201,7 +201,7 @@ public class GraphPanel extends JPanel {
 		int maxScore = 100;
 		double[] allPoints = new double[numLines * maxDataPoints];
 		for (int j = 0; j < numLines; j++) {
-			scores.clear();
+			scores = new ArrayList<>();
 			for (int i = 0; i < maxDataPoints; i++) {
 				allPoints[j * maxDataPoints + i] = Math.random() * maxScore;
 				scores.add(allPoints[j * maxDataPoints + i]);
