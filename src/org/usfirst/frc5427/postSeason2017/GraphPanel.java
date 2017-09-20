@@ -24,7 +24,7 @@ import javax.swing.SwingUtilities;
  *
  * @author Andrew
  */
-public class GraphPanel extends JPanel implements Runnable {
+public class GraphPanel extends JPanel {
 	public static final int numLines = 2;
 	private static ArrayList<ArrayList<Double>> lines = new ArrayList<ArrayList<Double>>(numLines);
 	private int width = 800;
@@ -32,19 +32,16 @@ public class GraphPanel extends JPanel implements Runnable {
 	private int padding = 25;
 	private int labelPadding = 25;
 	private Color line1Color = new Color(44, 102, 230, 180);
-	private Color line2Color = new Color(255, 51, 51, 180);
+	private Color line2Color = new Color(255,51,51,180);
 	private Color pointColor = new Color(100, 100, 100, 180);
 	private Color gridColor = new Color(200, 200, 200, 200);
 	private static final Stroke GRAPH_STROKE = new BasicStroke(2f);
 	private int pointWidth = 4;
 	private int numberYDivisions = 10;
-//	private List<Double> scores;
+	private List<Double> scores;
 
-	public GraphPanel() {
-//		this.scores = createAndShowGui();
-		createAndShowGui();
-		lines.add(0,null);
-		lines.add(1,null);
+	public GraphPanel(List<Double> scores) {
+		this.scores = scores;
 	}
 
 	public static void addLines(int lineNumber, List<Double> linePoints) {
@@ -58,13 +55,12 @@ public class GraphPanel extends JPanel implements Runnable {
 	}
 
 	@Override
-	public void paint(Graphics g) {
-		super.paint(g);
+	protected void paintComponent(Graphics g) {
+		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		double xScale = 1;
-		if(lines.get(0)!=null)
-			xScale = ((double) getWidth() - (2 * padding) - labelPadding) / (lines.get(0).size() - 1);
+
+		double xScale = ((double) getWidth() - (2 * padding) - labelPadding) / (scores.size() - 1);
 		double yScale = ((double) getHeight() - 2 * padding - labelPadding) / (getMaxScore() - getMinScore());
 		System.out.print(yScale);
 		// List<Point> graphPoints = new ArrayList<>();
@@ -72,14 +68,11 @@ public class GraphPanel extends JPanel implements Runnable {
 		ArrayList<List<Point>> graphPoints = new ArrayList<List<Point>>(lines.size());
 		for (int j = 0; j < lines.size(); j++) {
 			graphPoints.add(j, new ArrayList<Point>());
-			if(lines.get(j)!=null)
-			{
 			for (int i = 0; i < lines.get(j).size(); i++) {
 				int x1 = (int) (i * xScale + padding + labelPadding);
 				int y1 = (int) ((getMaxScore() - lines.get(j).get(i)) * yScale + padding);
 				graphPoints.get(j).add(new Point(x1, y1));
 			} // System.out.print(graphPoints.size());
-			}
 		}
 		// draw white background
 		g2.setColor(Color.WHITE);
@@ -94,7 +87,7 @@ public class GraphPanel extends JPanel implements Runnable {
 			int y0 = getHeight()
 					- ((i * (getHeight() - padding * 2 - labelPadding)) / numberYDivisions + padding + labelPadding);
 			int y1 = y0;
-			if (lines.get(0)!=null&&lines.get(0).size() > 0) {
+			if (scores.size() > 0) {
 				g2.setColor(gridColor);
 				g2.drawLine(padding + labelPadding + 1 + pointWidth, y0, getWidth() - padding, y1);
 				g2.setColor(Color.BLACK);
@@ -108,15 +101,13 @@ public class GraphPanel extends JPanel implements Runnable {
 		}
 
 		// and for x axis
-		if(lines.get(0)!=null)
-		{
-		for (int i = 0; i < lines.get(0).size(); i++) {
-			if (lines.get(0).size() > 1) {
-				int x0 = i * (getWidth() - padding * 2 - labelPadding) / (lines.get(0).size() - 1) + padding + labelPadding;
+		for (int i = 0; i < scores.size(); i++) {
+			if (scores.size() > 1) {
+				int x0 = i * (getWidth() - padding * 2 - labelPadding) / (scores.size() - 1) + padding + labelPadding;
 				int x1 = x0;
 				int y0 = getHeight() - padding - labelPadding;
 				int y1 = y0 - pointWidth;
-				if ((i % ((int) ((lines.get(0).size() / 20.0)) + 1)) == 0) {
+				if ((i % ((int) ((scores.size() / 20.0)) + 1)) == 0) {
 					g2.setColor(gridColor);
 					g2.drawLine(x0, getHeight() - padding - labelPadding - 1 - pointWidth, x1, padding);
 					g2.setColor(Color.BLACK);
@@ -128,7 +119,6 @@ public class GraphPanel extends JPanel implements Runnable {
 				g2.drawLine(x0, y0, x1, y1);
 			}
 		}
-		}
 
 		// create x and y axes
 		g2.drawLine(padding + labelPadding, getHeight() - padding - labelPadding, padding + labelPadding, padding);
@@ -139,22 +129,22 @@ public class GraphPanel extends JPanel implements Runnable {
 		g2.setColor(line1Color);
 		g2.setStroke(GRAPH_STROKE);
 		for (int j = 0; j < lines.size(); j++) {
-			if (j == 0)
+			if(j == 0)
 				g2.setColor(line1Color);
 			else
 				g2.setColor(line2Color);
-
-			System.out.println("\nLine " + (j + 1));
+				
+			System.out.println("\nLine "+(j+1));
 			// LINES
 			for (int i = 0; i < graphPoints.get(j).size() - 1; i++) {
 				int x1 = graphPoints.get(j).get(i).x;
-				System.out.println("x1: " + x1);
+				System.out.println("x1: "+x1);
 				int y1 = graphPoints.get(j).get(i).y;
-				System.out.println("y1: " + y1);
+				System.out.println("y1: "+y1);
 				int x2 = graphPoints.get(j).get(i + 1).x;
-				System.out.println("x2: " + x2);
+				System.out.println("x2: "+x2);
 				int y2 = graphPoints.get(j).get(i + 1).y;
-				System.out.println("y2: " + y2 + "\n");
+				System.out.println("y2: "+y2 +"\n");
 				g2.drawLine(x1, y1, x2, y2);
 			}
 			System.out.print("\n\n");
@@ -164,7 +154,7 @@ public class GraphPanel extends JPanel implements Runnable {
 		g2.setColor(pointColor);
 		for (int j = 0; j < lines.size(); j++) {
 			// POINT
-
+		
 			for (int i = 0; i < graphPoints.get(j).size(); i++) {
 				int x = graphPoints.get(j).get(i).x - pointWidth / 2;
 				int y = graphPoints.get(j).get(i).y - pointWidth / 2;
@@ -182,34 +172,22 @@ public class GraphPanel extends JPanel implements Runnable {
 
 	private double getMinScore() {
 		double minScore = Double.MAX_VALUE;
-		if(lines.get(0)!=null)
-		{
 		for (Double score : lines.get(0)) {
 			minScore = Math.min(minScore, score);
 		}
-		}
-		if(lines.get(1)!=null)
-		{
 		for (Double score : lines.get(1)) {
 			minScore = Math.min(minScore, score);
-		}
 		}
 		return minScore;
 	}
 
 	private double getMaxScore() {
 		double maxScore = Double.MIN_VALUE;
-		if(lines.get(0)!=null)
-		{
 		for (Double score : lines.get(0)) {
 			maxScore = Math.max(maxScore, score);
 		}
-		}
-		if(lines.get(1)!=null)
-		{
 		for (Double score : lines.get(1)) {
 			maxScore = Math.max(maxScore, score);
-		}
 		}
 		return maxScore;
 	}
@@ -222,23 +200,23 @@ public class GraphPanel extends JPanel implements Runnable {
 	 * public List<Double> getScores() { return scores; }
 	 */
 	private static void createAndShowGui() {
-//		List<Double> scores = new ArrayList<>();
-//
-//		// TODO: replace values
-//		int maxDataPoints = 40;
-//		int maxScore = 100;
-//		double[] allPoints = new double[numLines * maxDataPoints];
-//		for (int j = 0; j < numLines; j++) {
-//			scores = new ArrayList<>();
-//			for (int i = 0; i < maxDataPoints; i++) {
-//				allPoints[j * maxDataPoints + i] = Math.random() * maxScore;
-//				scores.add(allPoints[j * maxDataPoints + i]);
-//				// scores.add((double) i);
-//			}
-//			addLines(j, scores);
-//		}
+		List<Double> scores = new ArrayList<>();
 
-		GraphPanel mainPanel = new GraphPanel();
+		// TODO: replace values
+		int maxDataPoints = 40;
+		int maxScore = 100;
+		double[] allPoints = new double[numLines * maxDataPoints];
+		for (int j = 0; j < numLines; j++) {
+			scores = new ArrayList<>();
+			for (int i = 0; i < maxDataPoints; i++) {
+				allPoints[j * maxDataPoints + i] = Math.random() * maxScore;
+				scores.add(allPoints[j * maxDataPoints + i]);
+				// scores.add((double) i);
+			}
+			addLines(j, scores);
+		}
+
+		GraphPanel mainPanel = new GraphPanel(scores);
 		mainPanel.setPreferredSize(new Dimension(800, 600));
 		JFrame frame = new JFrame("DrawGraph");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -247,28 +225,12 @@ public class GraphPanel extends JPanel implements Runnable {
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 	}
-//	 public static void main(String[] args) {
-//	 SwingUtilities.invokeLater(new Runnable() {
-//	 public void run() {
-//	 createAndShowGui();
-//	 }
-//	 });
-//	 }
 
-	public void update(double value, int line) {
-		lines.get(line).add(value);
-	}
-
-	@Override
-	public void run() {
-		while (true) {
-
-			repaint();
-			try {
-				Thread.sleep(100);
-			} catch (Exception e) {
-				e.printStackTrace();
+	public static void main(String[] args) {
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				createAndShowGui();
 			}
-		}
+		});
 	}
 }
