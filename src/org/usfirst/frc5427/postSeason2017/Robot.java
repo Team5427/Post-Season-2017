@@ -51,7 +51,7 @@ public class Robot extends IterativeRobot implements PIDOutput {
 	public double rightMotorSpeed = 0;
 	public double setpoint = 0;
 
-	GraphPanel graph = new GraphPanel();
+	//GraphPanel graph = new GraphPanel();
 
 	static double kPS = 0.085000;
 	static double kIS = 0.008333;
@@ -263,7 +263,7 @@ public class Robot extends IterativeRobot implements PIDOutput {
 	public void testPeriodic() {
 		double currentRotationRate = rotateToAngleRate;
 		//TODO Change Values
-		graph.update(Math.random()*100, 0);
+		//graph.update(Math.random()*100, 0);
 		
 		SmartDashboard.putNumber("PID Output: ", rotateToAngleRate);
 		SmartDashboard.putNumber("Yaw Textbox", ahrs.getYaw());
