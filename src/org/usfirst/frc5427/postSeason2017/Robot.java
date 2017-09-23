@@ -20,7 +20,11 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.livewindow.LiveWindowSendable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.networktables.NetworkTable;
+import edu.wpi.first.wpilibj.Timer;
 
+import org.usfirst.frc.team5427.robot.util.Log;
+import org.usfirst.frc.team5427.robot.util.Config;
 import org.usfirst.frc5427.postSeason2017.commands.*;
 import org.usfirst.frc5427.postSeason2017.subsystems.*;
 import edu.wpi.first.wpilibj.SPI;
@@ -47,6 +51,8 @@ public class Robot extends IterativeRobot implements PIDOutput {
 	public static PIDController turnControllerRotate2;
 	public static Encoder encoderLeft;
 	public static Encoder encoderRight;
+	
+	NetworkTable table;
 
 	public double rightMotorSpeed = 0;
 	public double setpoint = 0;
@@ -169,6 +175,8 @@ public class Robot extends IterativeRobot implements PIDOutput {
 		turnControllerRotate2.setContinuous(true);
 		turnControllerRotate2.startLiveWindowMode();
 		turnControllerRotate2.disable();
+		
+		table = NetworkTable.getTable("datatable");
 
 		LiveWindow.addActuator("turnControllerStraight", "PID Table", turnControllerStraight);
 		LiveWindow.addActuator("Navx", "Ahrs", ahrs);
@@ -264,6 +272,18 @@ public class Robot extends IterativeRobot implements PIDOutput {
 		double currentRotationRate = rotateToAngleRate;
 		//TODO Change Values
 		//graph.update(Math.random()*100, 0);
+		
+		double x = 0;
+		double y = 0;
+		while(isEnabled())
+		{
+			Timer.delay(0.25);
+			table.putNumber("X", x);
+			table.putNumber("Y", y);
+			Log.init("X: "+x+"; Y: "+y);
+			x += 0.05;
+			y += 1.0;
+		}
 		
 		SmartDashboard.putNumber("PID Output: ", rotateToAngleRate);
 		SmartDashboard.putNumber("Yaw Textbox", ahrs.getYaw());
