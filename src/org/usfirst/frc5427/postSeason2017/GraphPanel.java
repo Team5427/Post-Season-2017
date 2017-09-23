@@ -24,7 +24,7 @@ import javax.swing.SwingUtilities;
  *
  * @author Andrew
  */
-public class GraphPanel extends JPanel
+public class GraphPanel extends JPanel implements Runnable
 {
 	public static final int numLines = 1;
 	private static ArrayList<ArrayList<Double>> lines = new ArrayList<ArrayList<Double>>(numLines);
@@ -44,6 +44,12 @@ public class GraphPanel extends JPanel
 	private int yMin = 0;
 	private int yMax = 100;
 
+	public GraphPanel()
+	{
+		Thread t = new Thread(this);
+		t.start();
+	}
+	
 	public static void addLines(int lineNumber, List<Double> linePoints)
 	{
 		lines.add(lineNumber, (ArrayList<Double>) linePoints);
@@ -230,6 +236,11 @@ public class GraphPanel extends JPanel
 		frame.setVisible(true);
 	}
 
+	public static void addPoint(int lineNum, double data)
+	{
+		lines.get(lineNum).add(data);
+	}
+	
 	public static void addPoints()
 	{
 		List<Double> scores = new ArrayList<>();
@@ -242,8 +253,8 @@ public class GraphPanel extends JPanel
 			scores = new ArrayList<>();
 			for (int i = 0; i < maxDataPoints; i++)
 			{
-				allPoints[j * maxDataPoints + i] = Math.random() * maxScore;
-				scores.add(allPoints[j * maxDataPoints + i]);
+//				allPoints[j * maxDataPoints + i] = Math.random() * maxScore;
+//				scores.add(allPoints[j * maxDataPoints + i]);
 				// scores.add((double) i);
 			}
 			addLines(j, scores);
@@ -259,5 +270,25 @@ public class GraphPanel extends JPanel
 				createAndShowGui();
 			}
 		});
+	}
+
+	@Override
+	public void run()
+	{
+		// TODO Auto-generated method stub
+		while(true)
+		{
+			try
+			{
+				Thread.sleep(1000);
+				addPoint(0,Math.random()*100);
+				repaint();
+			}
+			catch (InterruptedException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 }
