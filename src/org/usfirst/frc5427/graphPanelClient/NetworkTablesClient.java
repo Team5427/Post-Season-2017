@@ -13,12 +13,12 @@ public class NetworkTablesClient {
 	
 	public void run()
 	{
-
 		NetworkTable.setClientMode();
 		NetworkTable.setIPAddress("10.54.27.71");
 		NetworkTable table = NetworkTable.getTable("dataTable");
 
-		while (true) {
+		while (true)
+		{
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException ex) {
@@ -30,5 +30,4 @@ public class NetworkTablesClient {
 			System.out.println("Data 1: " + data1 + "Data 2: " + data2);
 		}
 	}
-
 }
