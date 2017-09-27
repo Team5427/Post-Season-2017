@@ -245,7 +245,7 @@ public class GraphPanel extends JPanel implements Runnable
 		    public void windowClosing(java.awt.event.WindowEvent windowEvent)
 		    {
 		    	out.close();
-		 
+		    	
 		    	frame.dispose();
 		    	
 		    	new GraphPointsScrollFrame();
