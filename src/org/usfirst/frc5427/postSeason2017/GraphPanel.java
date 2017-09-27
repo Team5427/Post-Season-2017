@@ -238,7 +238,15 @@ public class GraphPanel extends JPanel implements Runnable
 		GraphPanel mainPanel = new GraphPanel();
 		mainPanel.setPreferredSize(new Dimension(800, 600));
 		JFrame frame = new JFrame("DrawGraph");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		frame.addWindowListener(new java.awt.event.WindowAdapter() {
+		    @Override
+		    public void windowClosing(java.awt.event.WindowEvent windowEvent)
+		    {
+		    	out.close();
+		    	System.exit(0);
+		    }
+		});
 		frame.getContentPane().add(mainPanel);
 		frame.pack();
 		frame.setLocationRelativeTo(null);
