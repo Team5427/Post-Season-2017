@@ -308,8 +308,10 @@ public class GraphPanel extends JPanel implements Runnable
 	@Override
 	public void run()
 	{
+		int n = 0;
+		
 		// TODO Auto-generated method stub
-		while(true)
+		while(n<100)
 		{
 			try
 			{
@@ -317,6 +319,7 @@ public class GraphPanel extends JPanel implements Runnable
 				addPoint(0,Math.random()*100);
 				shiftLines();
 				repaint();
+				n++;
 			}
 			catch (InterruptedException e)
 			{
