@@ -270,6 +270,10 @@ public class GraphPanel extends JPanel implements Runnable
 		lines.get(lineNum).add(data);
 		out.write((lines.get(lineNum).size()==0 ? "":",") + data + "&"+LocalDateTime.now().toString().substring(14));
 	}
+	public static void shiftLines(){
+		
+		System.out.println("yPoint: "+(lines.get(0).get(lines.get(0).size()-1)));
+	}
 	
 	public static void addPoints()
 	{
@@ -311,6 +315,7 @@ public class GraphPanel extends JPanel implements Runnable
 			{
 				Thread.sleep(20);
 				addPoint(0,Math.random()*100);
+				shiftLines();
 				repaint();
 			}
 			catch (InterruptedException e)
