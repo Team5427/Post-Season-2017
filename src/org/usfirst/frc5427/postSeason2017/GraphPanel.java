@@ -268,11 +268,8 @@ public class GraphPanel extends JPanel implements Runnable
 			xMax++;
 		}
 		lines.get(lineNum).add(data);
-		out.write((lines.get(lineNum).size()==0 ? "":",") + data + "&"+LocalDateTime.now().toString().substring(14));
-	}
-	public static void shiftLines(){
-		
-		System.out.println("yPoint: "+(lines.get(0).get(lines.get(0).size()-1)));
+
+		out.write((lines.get(lineNum).size()==0 ? "":",") + data);
 	}
 	
 	public static void addPoints()
@@ -308,18 +305,14 @@ public class GraphPanel extends JPanel implements Runnable
 	@Override
 	public void run()
 	{
-		int n = 0;
-		
 		// TODO Auto-generated method stub
-		while(n<100)
+		while(true)
 		{
 			try
 			{
 				Thread.sleep(20);
 				addPoint(0,Math.random()*100);
-				shiftLines();
 				repaint();
-				n++;
 			}
 			catch (InterruptedException e)
 			{
