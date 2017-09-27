@@ -15,6 +15,8 @@ import java.util.Random;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import java.util.Scanner;
+import java.io.*;
 
 /*
  * To change this template, choose Tools | Templates
@@ -44,6 +46,9 @@ public class GraphPanel extends JPanel implements Runnable
 	private int yMin = 0;
 	private int yMax = 100;
 	private int xShift = 0;
+	
+	private static Scanner scan;
+	private static PrintWriter out;
 
 	public GraphPanel()
 	{
@@ -250,10 +255,7 @@ public class GraphPanel extends JPanel implements Runnable
 			xMax++;
 		}
 		lines.get(lineNum).add(data);
-	}
-	public static void shiftLines(){
-		
-		System.out.println("yPoint: "+(lines.get(0).get(lines.get(0).size()-1)));
+		out.write((lines.get(lineNum).size()==0 ? "":",") + data);
 	}
 	
 	public static void addPoints()
@@ -273,8 +275,11 @@ public class GraphPanel extends JPanel implements Runnable
 		}
 	}
 
-	public static void main(String[] args)
+	public static void main(String[] args)throws Exception
 	{
+		scan = new Scanner(new File("src/org/usfirst/frc5427/postSeason2017/GraphPoints.txt"));
+		out = new PrintWriter(new File("src/org/usfirst/frc5427/postSeason2017/GraphPoints.txt"));
+		
 		SwingUtilities.invokeLater(new Runnable()
 		{
 			public void run()
@@ -286,18 +291,14 @@ public class GraphPanel extends JPanel implements Runnable
 	@Override
 	public void run()
 	{
-		int n = 0;
-		
 		// TODO Auto-generated method stub
-		while(n<100)
+		while(true)
 		{
 			try
 			{
 				Thread.sleep(200);
 				addPoint(0,Math.random()*100);
-				shiftLines();
 				repaint();
-				n++;
 			}
 			catch (InterruptedException e)
 			{
