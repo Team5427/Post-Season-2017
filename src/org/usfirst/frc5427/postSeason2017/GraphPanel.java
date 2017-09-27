@@ -40,7 +40,7 @@ public class GraphPanel extends JPanel implements Runnable
 	private List<Double> scores;
 
 	private int xMin = 0;
-	private int xMax = 40;
+	private int xMax = 90;
 	private int yMin = 0;
 	private int yMax = 100;
 	private int xShift = 0;
@@ -116,7 +116,7 @@ public class GraphPanel extends JPanel implements Runnable
 		}
 
 		// and for x axis
-		for (int i = xMin; i <= xMax; i++)
+		for (int i = 0; i <= xMax - xMin; i++)
 		{
 			if (xMax - xMin > 1)
 			{
@@ -246,6 +246,8 @@ public class GraphPanel extends JPanel implements Runnable
 		if(lines.get(lineNum).size()>xMax-xMin)
 		{
 			xShift++;
+			xMin++;
+			xMax++;
 		}
 		lines.get(lineNum).add(data);
 	}
@@ -284,15 +286,18 @@ public class GraphPanel extends JPanel implements Runnable
 	@Override
 	public void run()
 	{
+		int n = 0;
+		
 		// TODO Auto-generated method stub
-		while(true)
+		while(n<100)
 		{
 			try
 			{
-				Thread.sleep(300);
+				Thread.sleep(200);
 				addPoint(0,Math.random()*100);
 				shiftLines();
 				repaint();
+				n++;
 			}
 			catch (InterruptedException e)
 			{
