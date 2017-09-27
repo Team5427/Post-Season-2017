@@ -39,10 +39,11 @@ public class GraphPanel extends JPanel implements Runnable
 	private int numberYDivisions = 10;
 	private List<Double> scores;
 
-	private int xMax = 40;
 	private int xMin = 0;
+	private int xMax = 40;
 	private int yMin = 0;
 	private int yMax = 100;
+	private int xShift = 0;
 
 	public GraphPanel()
 	{
@@ -69,7 +70,7 @@ public class GraphPanel extends JPanel implements Runnable
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-		double xScale = ((double) getWidth() - (2 * padding) - labelPadding) / (xMax - xMin - 1);
+		double xScale = ((double) getWidth() - (2 * padding) - labelPadding) / (xMax - xMin);
 		double yScale = ((double) getHeight() - 2 * padding - labelPadding) / (yMax - yMin);
 		System.out.print(yScale);
 		// List<Point> graphPoints = new ArrayList<>();
@@ -120,7 +121,7 @@ public class GraphPanel extends JPanel implements Runnable
 				int x1 = x0;
 				int y0 = getHeight() - padding - labelPadding;
 				int y1 = y0 - pointWidth;
-				if ((i % ((int) (((xMax - xMin) / 20.0)))) == 0)
+				if ((i % ((int) ((xMax - xMin) / 20.0))) == 0)
 				{
 					g2.setColor(gridColor);
 					g2.drawLine(x0, getHeight() - padding - labelPadding - 1 - pointWidth, x1, padding);
@@ -151,7 +152,7 @@ public class GraphPanel extends JPanel implements Runnable
 
 			System.out.println("\nLine " + (j + 1));
 			// LINES
-			for (int i = 0; i < graphPoints.get(j).size() - 1; i++)
+			for (int i = (graphPoints.get(j).size()-1)-(xMax-xMin)>0 ? (graphPoints.get(j).size()-1)-(xMax-xMin):0; i < graphPoints.get(j).size() - 1; i++)
 			{
 				int x1 = graphPoints.get(j).get(i).x;
 				System.out.println("x1: " + x1);
