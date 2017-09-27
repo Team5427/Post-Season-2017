@@ -58,10 +58,13 @@ public class GraphPanel extends JPanel implements Runnable
 		for (int i = 0; i < linePoints.size(); i++)
 		{
 			System.out.println(linePoints.get(i));
-		}
+		}       
 
 		System.out.print(lines.get(lineNumber).size());
+
 	}
+	
+
 
 	@Override
 	protected void paintComponent(Graphics g)
@@ -246,6 +249,10 @@ public class GraphPanel extends JPanel implements Runnable
 		}
 		lines.get(lineNum).add(data);
 	}
+	public static void shiftLines(){
+		
+		System.out.println("yPoint: "+(lines.get(0).get(lines.get(0).size()-1)));
+	}
 	
 	public static void addPoints()
 	{
@@ -274,7 +281,6 @@ public class GraphPanel extends JPanel implements Runnable
 			}
 		});
 	}
-
 	@Override
 	public void run()
 	{
@@ -285,6 +291,7 @@ public class GraphPanel extends JPanel implements Runnable
 			{
 				Thread.sleep(300);
 				addPoint(0,Math.random()*100);
+				shiftLines();
 				repaint();
 			}
 			catch (InterruptedException e)
