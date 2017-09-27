@@ -80,7 +80,7 @@ public class GraphPanel extends JPanel implements Runnable
 			graphPoints.add(j, new ArrayList<Point>());
 			for (int i = 0; i < lines.get(j).size(); i++)
 			{
-				int x1 = (int) (i * xScale + padding + labelPadding);
+				int x1 = (int) (i * xScale + padding + labelPadding) - (int)(xShift * xScale);
 				int y1 = (int) ((yMax - (lines.get(j).get(i))) * yScale + padding);
 				graphPoints.get(j).add(new Point(x1, y1));
 			} // System.out.print(graphPoints.size());
@@ -126,7 +126,7 @@ public class GraphPanel extends JPanel implements Runnable
 					g2.setColor(gridColor);
 					g2.drawLine(x0, getHeight() - padding - labelPadding - 1 - pointWidth, x1, padding);
 					g2.setColor(Color.BLACK);
-					String xLabel = i + "";
+					String xLabel = i + xShift + "";
 					FontMetrics metrics = g2.getFontMetrics();
 					int labelWidth = metrics.stringWidth(xLabel);
 					g2.drawString(xLabel, x0 - labelWidth / 2, y0 + metrics.getHeight() + 3);
@@ -173,7 +173,7 @@ public class GraphPanel extends JPanel implements Runnable
 		{
 			// POINT
 
-			for (int i = 0; i < graphPoints.get(j).size(); i++)
+			for (int i = (graphPoints.get(j).size()-1)-(xMax-xMin)>0 ? (graphPoints.get(j).size()-1)-(xMax-xMin):0; i < graphPoints.get(j).size(); i++)
 			{
 				int x = graphPoints.get(j).get(i).x - pointWidth / 2;
 				int y = graphPoints.get(j).get(i).y - pointWidth / 2;
@@ -237,27 +237,29 @@ public class GraphPanel extends JPanel implements Runnable
 		frame.setVisible(true);
 	}
 
-	public static void addPoint(int lineNum, double data)
+
+	public void addPoint(int lineNum, double data)
 	{
+		if(lines.get(lineNum).size()>xMax-xMin)
+		{
+			xShift++;
+		}
 		lines.get(lineNum).add(data);
 	}
 	
 	public static void addPoints()
 	{
 		List<Double> scores = new ArrayList<>();
-
-		int maxDataPoints = 40;
-		int maxScore = 100;
-		double[] allPoints = new double[numLines * maxDataPoints];
+		
 		for (int j = 0; j < numLines; j++)
 		{
 			scores = new ArrayList<>();
-			for (int i = 0; i < maxDataPoints; i++)
-			{
-//				allPoints[j * maxDataPoints + i] = Math.random() * maxScore;
-//				scores.add(allPoints[j * maxDataPoints + i]);
-				// scores.add((double) i);
-			}
+//			for (int i = 0; i < maxDataPoints; i++)
+//			{
+////				allPoints[j * maxDataPoints + i] = Math.random() * maxScore;
+////				scores.add(allPoints[j * maxDataPoints + i]);
+//				// scores.add((double) i);
+//			}
 			addLines(j, scores);
 		}
 	}
@@ -281,7 +283,7 @@ public class GraphPanel extends JPanel implements Runnable
 		{
 			try
 			{
-				Thread.sleep(1000);
+				Thread.sleep(300);
 				addPoint(0,Math.random()*100);
 				repaint();
 			}
