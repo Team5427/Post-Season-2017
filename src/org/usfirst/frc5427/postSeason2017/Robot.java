@@ -90,6 +90,9 @@ public class Robot extends IterativeRobot implements PIDOutput {
 	static long loopPreviousTime;
 	static long loopCurrentTime;
 	static long targetTime;
+	
+	static double x = 10;
+	static double y = 10;
 
 	// static boolean negative;
 	// TODO research motion profiling
@@ -273,17 +276,12 @@ public class Robot extends IterativeRobot implements PIDOutput {
 		//TODO Change Values
 		//graph.update(Math.random()*100, 0);
 		
-		double x = 0;
-		double y = 0;
-		while(isEnabled())
-		{
-			Timer.delay(0.25);
-			table.putNumber("X", x);
-			table.putNumber("Y", y);
-			Log.init("X: "+x+"; Y: "+y);
-			x += 0.05;
-			y += 1.0;
-		}
+		Timer.delay(0.25);
+		table.putNumber("X", x);
+		table.putNumber("Y", y);
+		Log.init("X: "+x+"; Y: "+y);
+		x += 0.05;
+		y += 1.0;
 		
 		SmartDashboard.putNumber("PID Output: ", rotateToAngleRate);
 		SmartDashboard.putNumber("Yaw Textbox", ahrs.getYaw());

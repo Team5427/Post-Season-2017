@@ -25,9 +25,9 @@ public class NetworkTablesClient {
 				Logger.getLogger(NetworkTablesClient.class.getName()).log(Level.SEVERE, null, ex);
 			}
 			
-			double data1 = table.getNumber("Data 1", 0.0);
-			double data2 = table.getNumber("Data 2", 0.0);
-			System.out.println("Data 1: " + data1 + "Data 2: " + data2);
+			double x = table.getNumber("X", 0.0);
+			double y = table.getNumber("Y", 0.0);
+			System.out.println("X: " + x + "Y: " + y);
 		}
 	}
 }
