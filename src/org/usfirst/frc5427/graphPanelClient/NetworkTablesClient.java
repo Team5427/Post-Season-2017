@@ -10,7 +10,7 @@ public class NetworkTablesClient {
 	{
 		new NetworkTablesClient().run();
 	}
-	
+	 
 	public void run()
 	{
 		NetworkTable.setClientMode();
