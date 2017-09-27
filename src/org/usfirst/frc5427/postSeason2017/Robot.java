@@ -234,6 +234,14 @@ public class Robot extends IterativeRobot implements PIDOutput {
 	public void teleopPeriodic() {
 		// SmartDashboard.putNumber("RampedSetpoint",
 		// currentManualRampingSetpoint);
+		
+		Timer.delay(0.25);
+		table.putNumber("X", x);
+		table.putNumber("Y", y);
+		Log.init("X: "+x+"; Y: "+y);
+		x += 0.05;
+		y += 1.0;
+		
 		Scheduler.getInstance().run();
 	}
 
@@ -275,13 +283,6 @@ public class Robot extends IterativeRobot implements PIDOutput {
 		double currentRotationRate = rotateToAngleRate;
 		//TODO Change Values
 		//graph.update(Math.random()*100, 0);
-		
-		Timer.delay(0.25);
-		table.putNumber("X", x);
-		table.putNumber("Y", y);
-		Log.init("X: "+x+"; Y: "+y);
-		x += 0.05;
-		y += 1.0;
 		
 		SmartDashboard.putNumber("PID Output: ", rotateToAngleRate);
 		SmartDashboard.putNumber("Yaw Textbox", ahrs.getYaw());
