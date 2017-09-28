@@ -59,13 +59,13 @@ public class GraphPanel extends JPanel implements Runnable
 	public static void addLines(int lineNumber, List<Double> linePoints)
 	{
 		lines.add(lineNumber, (ArrayList<Double>) linePoints);
-		System.out.println("\n\nLine number: " + lineNumber + "\n---------");
-		for (int i = 0; i < linePoints.size(); i++)
-		{
-			System.out.println(linePoints.get(i));
-		}       
-
-		System.out.print(lines.get(lineNumber).size());
+//		System.out.println("\n\nLine number: " + lineNumber + "\n---------");
+//		for (int i = 0; i < linePoints.size(); i++)
+//		{
+//			System.out.println(linePoints.get(i));
+//		}       
+//
+//		System.out.print(lines.get(lineNumber).size());
 
 	}
 	
@@ -80,7 +80,7 @@ public class GraphPanel extends JPanel implements Runnable
 
 		double xScale = ((double) getWidth() - (2 * padding) - labelPadding) / (xMax - xMin);
 		double yScale = ((double) getHeight() - 2 * padding - labelPadding) / (yMax - yMin);
-		System.out.print(yScale);
+//		System.out.print("yscale: "+yScale);
 		// List<Point> graphPoints = new ArrayList<>();
 		ArrayList<List<Point>> graphPoints = new ArrayList<List<Point>>(lines.size());
 		for (int j = 0; j < lines.size(); j++)
@@ -158,18 +158,18 @@ public class GraphPanel extends JPanel implements Runnable
 			else
 				g2.setColor(line2Color);
 
-			System.out.println("\nLine " + (j + 1));
+//			System.out.println("\nLine " + (j + 1));
 			// LINES
 			for (int i = (graphPoints.get(j).size()-1)-(xMax-xMin)>0 ? (graphPoints.get(j).size()-1)-(xMax-xMin):0; i < graphPoints.get(j).size() - 1; i++)
 			{
 				int x1 = graphPoints.get(j).get(i).x;
-				System.out.println("x1: " + x1);
+//				System.out.println("x1: " + x1);
 				int y1 = graphPoints.get(j).get(i).y;
-				System.out.println("y1: " + y1);
+//				System.out.println("y1: " + y1);
 				int x2 = graphPoints.get(j).get(i + 1).x;
-				System.out.println("x2: " + x2);
+//				System.out.println("x2: " + x2);
 				int y2 = graphPoints.get(j).get(i + 1).y;
-				System.out.println("y2: " + y2 + "\n");
+//				System.out.println("y2: " + y2 + "\n");
 				g2.drawLine(x1, y1, x2, y2);
 			}
 			System.out.print("\n\n");
@@ -244,7 +244,11 @@ public class GraphPanel extends JPanel implements Runnable
 		    public void windowClosing(java.awt.event.WindowEvent windowEvent)
 		    {
 		    	out.close();
-		    	System.exit(0);
+		 
+		    	frame.dispose();
+		    	
+		    	new GraphPointsScrollFrame();
+		    	
 		    }
 		});
 		frame.getContentPane().add(mainPanel);
@@ -304,7 +308,7 @@ public class GraphPanel extends JPanel implements Runnable
 		{
 			try
 			{
-				Thread.sleep(200);
+				Thread.sleep(10);
 				addPoint(0,Math.random()*100);
 				repaint();
 			}
