@@ -1,11 +1,18 @@
 package org.usfirst.frc5427.graphPanelClient;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.usfirst.frc.team5427.robot.util.Log;
+
 public class NetworkTablesClient {
+	
+	double x = 10;
+	double y = 10;
+	
 	public static void main (String [] args)
 	{
 		new NetworkTablesClient().run();
@@ -19,15 +26,12 @@ public class NetworkTablesClient {
 
 		while (true)
 		{
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException ex) {
-				Logger.getLogger(NetworkTablesClient.class.getName()).log(Level.SEVERE, null, ex);
-			}
-			
-			double x = table.getNumber("X", 0.0);
-			double y = table.getNumber("Y", 0.0);
-			System.out.println("X: " + x + "Y: " + y);
+			Timer.delay(0.25);
+			table.putNumber("X", x);
+			table.putNumber("Y", y);
+			Log.init("X: "+x+"; Y: "+y);
+			x += 0.05;
+			y += 1.0;
 		}
 	}
 }
