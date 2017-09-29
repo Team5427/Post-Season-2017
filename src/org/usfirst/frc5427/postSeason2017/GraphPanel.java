@@ -268,7 +268,7 @@ public class GraphPanel extends JPanel implements Runnable
 			xMax++;
 		}
 		lines.get(lineNum).add(data);
-		out.write((lines.get(lineNum).size()==0 ? "":",") + data + "&"+LocalDateTime.now().toString().substring(11));
+		out.write((lines.get(lineNum).size()==0 ? "":",") + data + "&"+LocalDateTime.now().toString().substring(14));
 	}
 	
 	public static void addPoints()
@@ -309,7 +309,7 @@ public class GraphPanel extends JPanel implements Runnable
 		{
 			try
 			{
-				Thread.sleep(10);
+				Thread.sleep(20);
 				addPoint(0,Math.random()*100);
 				repaint();
 			}
