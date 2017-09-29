@@ -21,7 +21,7 @@ public class GraphPointsScrollFrame extends JFrame  {
         setSize(1200,700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
-
+        
         sp_textScroller = new JScrollPane(new GraphPointsScrollPanel(600),JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         sp_textScroller.setBounds(150,25,getWidth()-100,getHeight()-70);
         

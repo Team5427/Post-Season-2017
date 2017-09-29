@@ -37,7 +37,7 @@ public class GraphPointsScrollPanel extends JPanel
         //labeling x points, graphing points
         for(int x = 0; x < points.size(); x++){
             g.setColor(Color.black);
-            g.drawString(x + "",x * 50 + 5,580 );
+            g.drawString(x+"",x * 50 + 5,580 );
             g.setColor(Color.RED);
             if(x < points.size()-1) {
                 int ycoo1  = (int)(((100 - points.get(x).intValue())/ 100.0) * (getHeight()-90)+ 20);
@@ -59,8 +59,15 @@ public class GraphPointsScrollPanel extends JPanel
         BufferedReader br = new BufferedReader(new FileReader("src/org/usfirst/frc5427/postSeason2017/GraphPoints.txt"));
         String s = br.readLine();
         String[] pointsText = (s.split(","));
+        ArrayList<String> ypoints = new ArrayList<>();
+        for(int x = 0; x< pointsText.length;x++){
+        	String y = pointsText[x];
+        	System.out.println(y+"");
+        	ypoints.add(y.split("&")[0]);
+        	
+        }
         for (int i = 1; i < pointsText.length; i++) {
-            points.add(Double.parseDouble(pointsText[i]));
+            points.add(Double.parseDouble(ypoints.get(i)));
         }
     }
 }

@@ -17,6 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import java.util.Scanner;
 import java.io.*;
+import java.time.LocalDateTime;
 
 /*
  * To change this template, choose Tools | Templates
@@ -267,7 +268,7 @@ public class GraphPanel extends JPanel implements Runnable
 			xMax++;
 		}
 		lines.get(lineNum).add(data);
-		out.write((lines.get(lineNum).size()==0 ? "":",") + data);
+		out.write((lines.get(lineNum).size()==0 ? "":",") + data + "&"+LocalDateTime.now().toString().substring(11));
 	}
 	
 	public static void addPoints()
