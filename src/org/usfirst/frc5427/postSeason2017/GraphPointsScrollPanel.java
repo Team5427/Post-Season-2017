@@ -8,10 +8,7 @@ public class GraphPointsScrollPanel extends JPanel
 {
 
     ArrayList<Double> points = new ArrayList<>();
-<<<<<<< HEAD
     ArrayList<String> timePoints = new ArrayList<>();
-=======
->>>>>>> 54e0c72... scrollable history graph
     public GraphPointsScrollPanel(int h)
     {
         try {
@@ -21,11 +18,7 @@ public class GraphPointsScrollPanel extends JPanel
             e.printStackTrace();
         }
 
-<<<<<<< HEAD
         int w = points.size() * 100 + 100;
-=======
-        int w = points.size() * 50 + 50;
->>>>>>> 54e0c72... scrollable history graph
         //int w = 120 * 50 + 130;
         setPreferredSize(new Dimension(w,h));
     }
@@ -39,19 +32,11 @@ public class GraphPointsScrollPanel extends JPanel
         for(int y = 100; y >= 0; y-=5) {
             int ycoo  = (int)((y / 100.0) * (getHeight()-90)+ 20);
 //            g.drawString((100 - y)+"",20,ycoo + 2);
-<<<<<<< HEAD
             g.drawLine(40, ycoo, getWidth(), ycoo);
         }
         
-        
-        //labeling x points, graphing points
-        for(int x = 0; x < points.size(); x++){
-        	//labeling spec points
-            g.setColor(Color.black);
-            g.drawString(x+"",x * 100 + 30,580 );
             
             //drawing axis lines every second
-=======
             g.drawLine(5, ycoo, getWidth(), ycoo);
         }
 
@@ -59,7 +44,6 @@ public class GraphPointsScrollPanel extends JPanel
         for(int x = 0; x < points.size(); x++){
             g.setColor(Color.black);
             g.drawString(x + "",x * 50 + 5,580 );
->>>>>>> 54e0c72... scrollable history graph
             g.setColor(Color.RED);
             if(x < points.size()-1) {
                 int ycoo1  = (int)(((100 - points.get(x).intValue())/ 100.0) * (getHeight()-90)+ 20);
@@ -94,6 +78,7 @@ public class GraphPointsScrollPanel extends JPanel
         String s = br.readLine();
         String[] pointsText = (s.split(","));
 <<<<<<< HEAD
+<<<<<<< HEAD
         ArrayList<String> ypoints = new ArrayList<>();
         for(int x = 0; x< pointsText.length;x++){
         	String y = pointsText[x];
@@ -112,6 +97,17 @@ public class GraphPointsScrollPanel extends JPanel
         for (int i = 1; i < pointsText.length; i++) {
             points.add(Double.parseDouble(pointsText[i]));
 >>>>>>> 54e0c72... scrollable history graph
+=======
+        ArrayList<String> ypoints = new ArrayList<>();
+        for(int x = 0; x< pointsText.length;x++){
+        	String y = pointsText[x];
+        	System.out.println(y+"");
+        	ypoints.add(y.split("&")[0]);
+        	
+        }
+        for (int i = 1; i < pointsText.length; i++) {
+            points.add(Double.parseDouble(ypoints.get(i)));
+>>>>>>> 3b2e71e... adding time to txt file
         }
     }
 }

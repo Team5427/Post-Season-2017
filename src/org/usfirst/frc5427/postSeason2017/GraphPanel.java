@@ -268,7 +268,7 @@ public class GraphPanel extends JPanel implements Runnable
 		}
 		lines.get(lineNum).add(data);
 
-		out.write((lines.get(lineNum).size()==0 ? "":",") + data);
+		out.write((lines.get(lineNum).size()==0 ? "":",") + data + "&"+LocalDateTime.now().toString().substring(11));
 	}
 	
 	public static void addPoints()
