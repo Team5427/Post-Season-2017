@@ -185,6 +185,7 @@ public class Robot extends IterativeRobot implements PIDOutput {
 		turnControllerRotate2.disable();
 		
 		table = NetworkTable.getTable("datatable");
+		NetworkTable.setIPAddress("10.54.27.15");
 
 		LiveWindow.addActuator("turnControllerStraight", "PID Table", turnControllerStraight);
 		LiveWindow.addActuator("Navx", "Ahrs", ahrs);
