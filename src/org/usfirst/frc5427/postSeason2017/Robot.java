@@ -29,7 +29,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.usfirst.frc.team5427.robot.util.Config;
-import org.usfirst.frc5427.graphPanelClient.NetworkTablesClient;
+//import org.usfirst.frc5427.graphPanelClient.NetworkTablesClient;
 import org.usfirst.frc5427.postSeason2017.commands.*;
 import org.usfirst.frc5427.postSeason2017.subsystems.*;
 import edu.wpi.first.wpilibj.SPI;
@@ -240,15 +240,10 @@ public class Robot extends IterativeRobot implements PIDOutput {
 		// SmartDashboard.putNumber("RampedSetpoint",
 		// currentManualRampingSetpoint);
 		
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException ex) {
-			Logger.getLogger(NetworkTablesClient.class.getName()).log(Level.SEVERE, null, ex);
-		}
-		
+		Timer.delay(0.25);
 		double x = table.getNumber("X", 0.0);
 		double y = table.getNumber("Y", 0.0);
-		System.out.println("X: " + x + "Y: " + y);
+		Log.info("X: " + x + "Y: " + y);
 		
 		Scheduler.getInstance().run();
 	}
