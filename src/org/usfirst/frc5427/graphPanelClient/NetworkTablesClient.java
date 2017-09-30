@@ -14,8 +14,8 @@ public class NetworkTablesClient {
 	public void run()
 	{
 		NetworkTable.setClientMode();
-		NetworkTable.setIPAddress("10.54.27.71");
-		NetworkTable table = NetworkTable.getTable("dataTable");
+		NetworkTable.setIPAddress("10.54.27.15");
+		NetworkTable table = NetworkTable.getTable("datatable");
 
 		while (true)
 		{
