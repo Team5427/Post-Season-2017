@@ -20,9 +20,9 @@ public class NetworkTablesServer {
 	  
 	public void run()
 	{
-		NetworkTable.setServerMode();
+		NetworkTable.setClientMode();
 		NetworkTable.setIPAddress("10.54.27.15");
-		NetworkTable table = NetworkTable.getTable("dataTable");
+		NetworkTable table = NetworkTable.getTable("datatable");
 
 		while (true)
 		{
