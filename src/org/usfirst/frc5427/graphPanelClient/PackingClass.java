@@ -36,6 +36,7 @@ public class PackingClass {
 		return d;
 	}
 	
+	@Deprecated
 	public static byte[] doubleToBytes(double d)
 	{
 		return null;
