@@ -247,7 +247,7 @@ public class GraphPanel extends JPanel implements Runnable
 		    	out.close();
 		    	frame.dispose();
 		    	
-		    	new GraphPointsScrollFrame();
+		    	new GraphPointsScrollPanel(500);
 		    	
 		    }
 		});
