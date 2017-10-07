@@ -60,18 +60,18 @@ public class PackingClass {
 		if(Math.pow(2, maxExponent)!=d)
 			maxExponent--;
 		curExponent=maxExponent;
-		byte[]b=new byte[curExponent];
+		byte[]b=new byte[curExponent+1];
 		for(int x=b.length-1;x>=0;x--){
 			if((temp-Math.pow(2,curExponent))>=0)
 			{
 				temp-=Math.pow(2,curExponent);
 				b[x]=1;
+				
 			}
 			else
 				b[x]=0;
+			curExponent--;
 		}
 		return b;
 	}
-	
-
 }
