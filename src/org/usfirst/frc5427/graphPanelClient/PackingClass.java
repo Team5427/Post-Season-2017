@@ -24,6 +24,18 @@ public class PackingClass {
 //		}
 //		while(x<10);
 //		System.out.print("The double is:" + bytesToDouble(b));
+		
+		//Code to test doubleToBytes(d)
+		Scanner kb = new Scanner(System.in);
+		System.out.print("Enter the double you wish to convert: ");
+		double d = kb.nextDouble();
+		System.out.print("\n");
+		byte[] b = doubleToBytes(d);
+		System.out.print("The value in binary is ");
+		for(int x = b.length-1; x>=0;x--)
+		{
+			System.out.print(b[x]);
+		}
 	}
 	
 	
@@ -41,15 +53,16 @@ public class PackingClass {
 	{
 		int curExponent, maxExponent = 0;
 		double temp=d;
-		while(Math.pow(2,maxExponent)<d)
+		while(Math.pow(2,maxExponent)<=d)
 		{
 			maxExponent++;
 		}
-		maxExponent--;
+		if(Math.pow(2, maxExponent)!=d)
+			maxExponent--;
 		curExponent=maxExponent;
 		byte[]b=new byte[curExponent];
 		for(int x=b.length-1;x>=0;x--){
-			if((temp-Math.pow(2,curExponent)>0))
+			if((temp-Math.pow(2,curExponent))>=0)
 			{
 				temp-=Math.pow(2,curExponent);
 				b[x]=1;
