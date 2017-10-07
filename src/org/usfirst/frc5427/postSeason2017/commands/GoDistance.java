@@ -32,7 +32,6 @@ private double desiredAccelerationPercentage=0;
 
  // Called repeatedly when this Command is scheduled to run
  protected void execute() {
- 	Robot.driveTrain.takeJoystickInputs(Robot.oi.getJoy());
  	//command to accelerate for a certain amt. time
  	//command to retain percentage for a certain amt. time
  	//command to accelerate negatively for a certain amt, time
