@@ -191,19 +191,26 @@ public class Robot extends IterativeRobot implements PIDOutput
 		Scheduler.getInstance().run();
 	}
 
+	@Override
 	public void autonomousInit()
 	{
 		// schedule the autonomous command (example)
-		if (autonomousCommand != null)
-			autonomousCommand.start();
+//		if (autonomousCommand != null)
+//			autonomousCommand.start();
+		
+		startTime = System.nanoTime() / 1000000000.;
+		System.out.println("auto initialized");
 	}
 
 	/**
 	 * This function is called periodically during autonomous
 	 */
+	@Override
 	public void autonomousPeriodic()
 	{
 		Scheduler.getInstance().run();
+		System.out.println(getTime());
+		driveStraight(.5,2);
 	}
 
 	public void teleopInit()
@@ -429,6 +436,23 @@ public class Robot extends IterativeRobot implements PIDOutput
 		// driveTrain.stop();
 		// }
 
+	}
+	
+	public void driveStraight(double power, double time)
+	{
+		System.out.println("driveStraight");
+		if(getTime() < time)
+			driveTrain.robotDrive4.drive(power, 0);
+		else
+			driveTrain.stop();
+	}
+	
+	/**
+	 * 
+	 * @return returns the number of seconds since autonomous started
+	 */
+	protected double getTime() {
+		return (double) ((System.nanoTime() - startTime) / 1000000000f);
 	}
 
 	public void pidWrite(double output)
