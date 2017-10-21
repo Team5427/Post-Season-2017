@@ -15,6 +15,9 @@ import java.util.Random;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+
+import edu.wpi.first.wpilibj.networktables.NetworkTable;
+
 import java.util.Scanner;
 import java.io.*;
 import java.time.LocalDateTime;
@@ -42,35 +45,40 @@ public class GraphPanel extends JPanel implements Runnable
 	private int numberYDivisions = 10;
 	private List<Double> scores;
 
+	private NetworkTable table;
+
 	private int xMin = 0;
-	private int xMax = 90;
+	private int xMax = 10;
 	private int yMin = 0;
 	private int yMax = 100;
 	private int xShift = 0;
-	
+
+	private double graphingTime;
+	private double previousGraphingTime = 0;
+	private double angle;
+
 	private static Scanner scan;
 	private static PrintWriter out;
 
 	public GraphPanel()
 	{
+		table = NetworkTable.getTable("datatable");
 		Thread t = new Thread(this);
 		t.start();
 	}
-	
+
 	public static void addLines(int lineNumber, List<Double> linePoints)
 	{
 		lines.add(lineNumber, (ArrayList<Double>) linePoints);
-//		System.out.println("\n\nLine number: " + lineNumber + "\n---------");
-//		for (int i = 0; i < linePoints.size(); i++)
-//		{
-//			System.out.println(linePoints.get(i));
-//		}       
-//
-//		System.out.print(lines.get(lineNumber).size());
+		// System.out.println("\n\nLine number: " + lineNumber + "\n---------");
+		// for (int i = 0; i < linePoints.size(); i++)
+		// {
+		// System.out.println(linePoints.get(i));
+		// }
+		//
+		// System.out.print(lines.get(lineNumber).size());
 
 	}
-	
-
 
 	@Override
 	protected void paintComponent(Graphics g)
@@ -81,7 +89,7 @@ public class GraphPanel extends JPanel implements Runnable
 
 		double xScale = ((double) getWidth() - (2 * padding) - labelPadding) / (xMax - xMin);
 		double yScale = ((double) getHeight() - 2 * padding - labelPadding) / (yMax - yMin);
-//		System.out.print("yscale: "+yScale);
+		// System.out.print("yscale: "+yScale);
 		// List<Point> graphPoints = new ArrayList<>();
 		ArrayList<List<Point>> graphPoints = new ArrayList<List<Point>>(lines.size());
 		for (int j = 0; j < lines.size(); j++)
@@ -89,7 +97,7 @@ public class GraphPanel extends JPanel implements Runnable
 			graphPoints.add(j, new ArrayList<Point>());
 			for (int i = 0; i < lines.get(j).size(); i++)
 			{
-				int x1 = (int) (i * xScale + padding + labelPadding) - (int)(xShift * xScale);
+				int x1 = (int) (i * xScale + padding + labelPadding) - (int) (xShift * xScale);
 				int y1 = (int) ((yMax - (lines.get(j).get(i))) * yScale + padding);
 				graphPoints.get(j).add(new Point(x1, y1));
 			} // System.out.print(graphPoints.size());
@@ -159,18 +167,19 @@ public class GraphPanel extends JPanel implements Runnable
 			else
 				g2.setColor(line2Color);
 
-//			System.out.println("\nLine " + (j + 1));
+			// System.out.println("\nLine " + (j + 1));
 			// LINES
-			for (int i = (graphPoints.get(j).size()-1)-(xMax-xMin)>0 ? (graphPoints.get(j).size()-1)-(xMax-xMin):0; i < graphPoints.get(j).size() - 1; i++)
+			for (int i = (graphPoints.get(j).size() - 1) - (xMax - xMin) > 0
+					? (graphPoints.get(j).size() - 1) - (xMax - xMin) : 0; i < graphPoints.get(j).size() - 1; i++)
 			{
 				int x1 = graphPoints.get(j).get(i).x;
-//				System.out.println("x1: " + x1);
+				// System.out.println("x1: " + x1);
 				int y1 = graphPoints.get(j).get(i).y;
-//				System.out.println("y1: " + y1);
+				// System.out.println("y1: " + y1);
 				int x2 = graphPoints.get(j).get(i + 1).x;
-//				System.out.println("x2: " + x2);
+				// System.out.println("x2: " + x2);
 				int y2 = graphPoints.get(j).get(i + 1).y;
-//				System.out.println("y2: " + y2 + "\n");
+				// System.out.println("y2: " + y2 + "\n");
 				g2.drawLine(x1, y1, x2, y2);
 			}
 			System.out.print("\n\n");
@@ -182,7 +191,8 @@ public class GraphPanel extends JPanel implements Runnable
 		{
 			// POINT
 
-			for (int i = (graphPoints.get(j).size()-1)-(xMax-xMin)>0 ? (graphPoints.get(j).size()-1)-(xMax-xMin):0; i < graphPoints.get(j).size(); i++)
+			for (int i = (graphPoints.get(j).size() - 1) - (xMax - xMin) > 0
+					? (graphPoints.get(j).size() - 1) - (xMax - xMin) : 0; i < graphPoints.get(j).size(); i++)
 			{
 				int x = graphPoints.get(j).get(i).x - pointWidth / 2;
 				int y = graphPoints.get(j).get(i).y - pointWidth / 2;
@@ -240,16 +250,17 @@ public class GraphPanel extends JPanel implements Runnable
 		mainPanel.setPreferredSize(new Dimension(800, 600));
 		JFrame frame = new JFrame("DrawGraph");
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		frame.addWindowListener(new java.awt.event.WindowAdapter() {
-		    @Override
-		    public void windowClosing(java.awt.event.WindowEvent windowEvent)
-		    {
-		    	out.close();
-		    	frame.dispose();
-		    	
-		    	new GraphPointsScrollPanel(500);
-		    	
-		    }
+		frame.addWindowListener(new java.awt.event.WindowAdapter()
+		{
+			@Override
+			public void windowClosing(java.awt.event.WindowEvent windowEvent)
+			{
+				out.close();
+				frame.dispose();
+
+				new GraphPointsScrollPanel(500);
+
+			}
 		});
 		frame.getContentPane().add(mainPanel);
 		frame.pack();
@@ -257,42 +268,42 @@ public class GraphPanel extends JPanel implements Runnable
 		frame.setVisible(true);
 	}
 
-
 	public void addPoint(int lineNum, double data)
 	{
-		if(lines.get(lineNum).size()>xMax-xMin)
+		if (lines.get(lineNum).size() > xMax - xMin)
 		{
-			xShift++;
-			xMin++;
-			xMax++;
+			xShift+=0.25;
+			xMin+=0.25;
+			xMax+=0.25;
 		}
 		lines.get(lineNum).add(data);
 
-		out.write((lines.get(lineNum).size()==0 ? "":",") + data + "&"+LocalDateTime.now().toString().substring(14));
+		out.write((lines.get(lineNum).size() == 0 ? "" : ",") + data + "&"
+				+ LocalDateTime.now().toString().substring(14));
 	}
-	
+
 	public static void addPoints()
 	{
 		List<Double> scores = new ArrayList<>();
-		
+
 		for (int j = 0; j < numLines; j++)
 		{
 			scores = new ArrayList<>();
-//			for (int i = 0; i < maxDataPoints; i++)
-//			{
-////				allPoints[j * maxDataPoints + i] = Math.random() * maxScore;
-////				scores.add(allPoints[j * maxDataPoints + i]);
-//				// scores.add((double) i);
-//			}
+			// for (int i = 0; i < maxDataPoints; i++)
+			// {
+			//// allPoints[j * maxDataPoints + i] = Math.random() * maxScore;
+			//// scores.add(allPoints[j * maxDataPoints + i]);
+			// // scores.add((double) i);
+			// }
 			addLines(j, scores);
 		}
 	}
 
-	public static void main(String[] args)throws Exception
+	public static void main(String[] args) throws Exception
 	{
 		scan = new Scanner(new File("src/org/usfirst/frc5427/postSeason2017/GraphPoints.txt"));
 		out = new PrintWriter(new File("src/org/usfirst/frc5427/postSeason2017/GraphPoints.txt"));
-		
+
 		SwingUtilities.invokeLater(new Runnable()
 		{
 			public void run()
@@ -301,19 +312,23 @@ public class GraphPanel extends JPanel implements Runnable
 			}
 		});
 	}
+
 	@Override
 	public void run()
 	{
 		// TODO Auto-generated method stub
-		while(true)
+		while (true)
 		{
 			try
 			{
 				Thread.sleep(20);
-				addPoint(0,Math.random()*100);
+				graphingTime = table.getNumber("Time", 0.00);
+				angle = table.getNumber("Angle", 0.00);
+				if (graphingTime == 0 || graphingTime != previousGraphingTime)
+					addPoint(0, angle);
+				previousGraphingTime = graphingTime;
 				repaint();
-			}
-			catch (InterruptedException e)
+			} catch (InterruptedException e)
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
