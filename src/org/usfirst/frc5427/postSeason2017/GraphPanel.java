@@ -10,6 +10,7 @@ import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import javax.swing.JFrame;
@@ -17,6 +18,8 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import java.util.Scanner;
 import java.io.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 
 /*
@@ -30,6 +33,7 @@ import java.time.LocalDateTime;
 public class GraphPanel extends JPanel implements Runnable
 {
 	public static final int numLines = 1;
+	public static String dateString;
 	private static ArrayList<ArrayList<Double>> lines = new ArrayList<ArrayList<Double>>(numLines);
 	private int padding = 25;
 	private int labelPadding = 25;
@@ -245,9 +249,10 @@ public class GraphPanel extends JPanel implements Runnable
 		    public void windowClosing(java.awt.event.WindowEvent windowEvent)
 		    {
 		    	out.close();
+		 
 		    	frame.dispose();
 		    	
-		    	new GraphPointsScrollPanel(500);
+		    	new GraphPointsScrollFrame();
 		    	
 		    }
 		});
@@ -267,7 +272,6 @@ public class GraphPanel extends JPanel implements Runnable
 			xMax++;
 		}
 		lines.get(lineNum).add(data);
-
 		out.write((lines.get(lineNum).size()==0 ? "":",") + data + "&"+LocalDateTime.now().toString().substring(14));
 	}
 	
@@ -290,8 +294,15 @@ public class GraphPanel extends JPanel implements Runnable
 
 	public static void main(String[] args)throws Exception
 	{
-		scan = new Scanner(new File("src/org/usfirst/frc5427/postSeason2017/GraphPoints.txt"));
-		out = new PrintWriter(new File("src/org/usfirst/frc5427/postSeason2017/GraphPoints.txt"));
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+		Date date = new Date();
+		dateString = dateFormat.format(date);
+		System.out.println(dateString);
+		out = new PrintWriter(new File("src/org/usfirst/frc5427/postSeason2017/"+dateString+".txt"));
+		scan = new Scanner(new File("src/org/usfirst/frc5427/postSeason2017/"+dateString+".txt"));
+		
+		final File file = new File("src/"+dateString+".txt");
+		file.createNewFile();
 		
 		SwingUtilities.invokeLater(new Runnable()
 		{
