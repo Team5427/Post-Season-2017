@@ -9,7 +9,16 @@ public class GraphPointsScrollPanel extends JPanel
 
     ArrayList<Double> points = new ArrayList<>();
     ArrayList<String> timePoints = new ArrayList<>();
-    public GraphPointsScrollPanel(int h)
+    
+    /*
+     * X_SCALE_CONSTANT - Variable made to make changing the X Scale easy.
+     * Larger makes the distance between points larger.
+     * Smaller makes the distance between points smaller.
+     * PURELY VISUAL - Does not change the data whatsoever.
+     */
+    public final int X_SCALE_CONSTANT = 10;
+    
+    public GraphPointsScrollPanel(int panelHeight)
     {
         try {
             readData();
@@ -18,9 +27,9 @@ public class GraphPointsScrollPanel extends JPanel
             e.printStackTrace();
         }
 
-        int w = points.size() * 100 + 100;
+        int panelWidth = points.size() * 100 + 100;
         //int w = 120 * 50 + 130;
-        setPreferredSize(new Dimension(w,h));
+        setPreferredSize(new Dimension(panelWidth,panelHeight));
     }
 
     public void paint(Graphics g)
@@ -40,22 +49,24 @@ public class GraphPointsScrollPanel extends JPanel
         for(int x = 0; x < points.size(); x++){
         	//labeling spec points
             g.setColor(Color.black);
-            g.drawString(x+"",x * 100 + 30,580 );
+            if(x%4==0)
+            	g.drawString(x+"",x * X_SCALE_CONSTANT + 30,560 );
             
             //drawing axis lines every second
             g.setColor(Color.RED);
             if(x < points.size()-1) {
                 int ycoo1  = (int)(((100 - points.get(x).intValue())/ 100.0) * (getHeight()-90)+ 20);
                 int ycoo2  = (int)(((100 - points.get(x+1).intValue())/ 100.0) * (getHeight()-90)+ 20);
-                g.drawLine(x * 100 + 35, ycoo1, (x + 1) * 100 + 35, ycoo2);
+                g.drawLine(x * X_SCALE_CONSTANT + 35, ycoo1, (x + 1) * X_SCALE_CONSTANT + 35, ycoo2);
             }
             
             //points
             
             
-            g.fillOval(x*100+35-3,(int)(((100 - points.get(x).intValue())/ 100.0) * (getHeight()-90)+ 20 - 3),6,6);
+            g.fillOval(x*X_SCALE_CONSTANT+35-3,(int)(((100 - points.get(x).intValue())/ 100.0) * (getHeight()-90)+ 20 - 3),6,6);
             g.setColor(Color.black);
-            g.drawLine(x*100+35, (getHeight()-90)+ 20, x*100+35, 0);
+            if(x%4==0)
+            	g.drawLine(x*X_SCALE_CONSTANT+35, (getHeight()-90)+ 20, x*X_SCALE_CONSTANT+35, 0);
         }
         
        
