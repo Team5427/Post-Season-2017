@@ -25,18 +25,23 @@ public class GraphPointsScrollFrame extends JFrame  {
         
         sp_textScroller = new JScrollPane(new GraphPointsScrollPanel(600),JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         sp_textScroller.setBounds(150,25,getWidth()-100,getHeight()-70);
-        
-        y_lbl = new JLabel();
-        y_lbl.setIcon(new ImageIcon("src/org/usfirst/frc5427/postSeason2017/yLabels.png"));
-        y_lbl.setBounds(110, -10, 100, 630);
-        
         add(sp_textScroller);
-        add(y_lbl);
 
         setVisible(true);
     }
-
-
-
-
+    
+    @Override
+    public void paint(Graphics g)
+    {
+    	g.setColor(Color.WHITE);
+    	g.fillRect(0, 0, getWidth(), getHeight());
+    	
+    	g.setColor(Color.BLACK);
+    	for(int y=100;y>=0;y-=5)
+    	{
+    		int ycoo = (int)((y/120.0)*(getHeight()-90)+100);
+    		g.drawString((100-y)+"", 140, ycoo);
+    	}
+    	sp_textScroller.repaint();
+    }
 }

@@ -28,7 +28,7 @@ import java.time.LocalDateTime;
  */
 /**
  *
- * @author Andrew
+ * @author Andrew, Gabby, Blake, Abhinav, Kipp Archer Strand icywaters Corman, Gerb, Varsha, Ethan, Aidan, Srikar, Sean, Gerb, Chris, Andrew, Charlie, Dylan, Art, Priyanka, Stack Overflow, Double Dub, Rahul, Philip, and more Gerb.
  */
 public class GraphPanel extends JPanel implements Runnable
 {
