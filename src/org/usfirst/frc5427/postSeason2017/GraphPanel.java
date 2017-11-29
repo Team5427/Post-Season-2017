@@ -22,12 +22,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 /**
- *
  * @author Andrew, Gabby, Blake, Abhinav, Kipp Archer Strand icywaters Corman, Gerb, Varsha, Ethan, Aidan, Srikar, Sean, Gerb, Chris, Andrew, Charlie, Dylan, Art, Priyanka, Stack Overflow, Double Dub, Rahul, Philip, and more Gerb.
  */
 public class GraphPanel extends JPanel implements Runnable

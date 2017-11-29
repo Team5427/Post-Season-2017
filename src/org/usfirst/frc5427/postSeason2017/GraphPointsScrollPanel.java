@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.io.*;
 
@@ -19,7 +20,8 @@ public class GraphPointsScrollPanel extends JPanel implements MouseListener {
 	public final double ZOOM_FACTOR = 2;
 	private int xZoomCenter;
 	private int yZoomCenter;
-	
+	private AffineTransform at;
+
 	/*
 	 * X_SCALE_CONSTANT - Variable made to make changing the X Scale easy. Larger
 	 * makes the distance between points larger. Smaller makes the distance between
@@ -36,7 +38,7 @@ public class GraphPointsScrollPanel extends JPanel implements MouseListener {
 		this.xZoomScale = 1;
 		this.yZoomScale = 1;
 		this.zoomed = false;
-		
+
 		this.panelWidth = points.size() * 100 + 100;
 		this.panelHeight = panelHeight;
 		// int w = 120 * 50 + 130;
@@ -58,29 +60,39 @@ public class GraphPointsScrollPanel extends JPanel implements MouseListener {
 		for (int x = 0; x < points.size(); x++) {
 			// labeling spec points
 			g.setColor(Color.black);
-			if (x % 4 == 0)
-				g.drawString(x + "", x * X_SCALE_CONSTANT + 30, 560);
+			if (x % 4 == 0) {
+				if (yZoomScale != 1.0)
+					g.drawString(x + "", x * (int) xZoomScale * X_SCALE_CONSTANT + 30,
+							(int) (560 * (yZoomScale + .04)));
+				else
+					g.drawString(x + "", x * (int) xZoomScale * X_SCALE_CONSTANT + 30, 560);
+			}
 
-			// drawing axis lines every second
+			// drawing the lines every second
 			g.setColor(Color.RED);
 			if (x < points.size() - 1) {
 				int ycoo1 = (int) (((100 - points.get(x).intValue()) / 100.0) * (getHeight() - 90) + 20);
 				int ycoo2 = (int) (((100 - points.get(x + 1).intValue()) / 100.0) * (getHeight() - 90) + 20);
-				g.drawLine(x * X_SCALE_CONSTANT + 35, ycoo1, (x + 1) * X_SCALE_CONSTANT + 35, ycoo2);
+				g.drawLine(x * (int) xZoomScale * X_SCALE_CONSTANT + 35, ycoo1,
+						(x + 1) * (int) xZoomScale * X_SCALE_CONSTANT + 35, ycoo2);
 			}
 
 			// points
 
-			g.fillOval(x * X_SCALE_CONSTANT + 35 - 3,
+			g.fillOval(x * (int) xZoomScale * X_SCALE_CONSTANT + 35 - 3,
 					(int) (((100 - points.get(x).intValue()) / 100.0) * (getHeight() - 90) + 20 - 3), 6, 6);
 			g.setColor(Color.black);
 			if (x % 4 == 0)
-				g.drawLine(x * X_SCALE_CONSTANT + 35, (getHeight() - 90) + 20, x * X_SCALE_CONSTANT + 35, 0);
-			g.translate(panelWidth/2, panelHeight/2);
-			((Graphics2D)g).scale(xZoomScale,yZoomScale);
-			g.translate(-panelWidth/2, -panelHeight/2);
+				g.drawLine(x * (int) xZoomScale * X_SCALE_CONSTANT + 35, (getHeight() - 90) + 20,
+						x * (int) xZoomScale * X_SCALE_CONSTANT + 35, 0);
 		}
-
+		// g.translate(panelWidth/2, panelHeight/2);
+		// ((Graphics2D)g).scale(xZoomScale,yZoomScale);
+		// g.translate(-panelWidth/2, -panelHeight/2);
+		// Graphics2D g2 = (Graphics2D)g;
+		// at = new AffineTransform();
+		// at.scale(xZoomScale,yZoomScale);
+		// ((Graphics2D)g).transform(at);
 	}
 
 	public void readData() throws IOException {
@@ -127,32 +139,40 @@ public class GraphPointsScrollPanel extends JPanel implements MouseListener {
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		if(this.zoomed)
-		{
+		if (this.zoomed) {
 			this.zoomed = false;
 			this.xZoomScale = 1;
 			this.yZoomScale = 1;
-		}
-		else if(!this.zoomed)
-		{
+		} else if (!this.zoomed) {
 			this.zoomed = true;
 			this.xZoomScale = ZOOM_FACTOR;
 			this.yZoomScale = ZOOM_FACTOR;
 			this.xZoomCenter = e.getX();
 			this.yZoomCenter = e.getY();
 		}
-		System.out.println(this.xZoomScale);
 		repaint();
+		revalidate();
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		
+
 	}
 
 	@Override
-	public void addNotify()
-	{
+	public void addNotify() {
 		super.addNotify();
+	}
+
+	public boolean getZoomed() {
+		return this.zoomed;
+	}
+
+	public double getXZoomScale() {
+		return this.xZoomScale;
+	}
+
+	public double getYZoomScale() {
+		return this.yZoomScale;
 	}
 }
