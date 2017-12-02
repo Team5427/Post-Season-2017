@@ -16,6 +16,9 @@ import java.util.Random;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+
+import edu.wpi.first.wpilibj.networktables.NetworkTable;
+
 import java.util.Scanner;
 import java.io.*;
 import java.text.DateFormat;
@@ -40,12 +43,18 @@ public class GraphPanel extends JPanel implements Runnable
 	private int pointWidth = 4;
 	private int numberYDivisions = 10;
 	private List<Double> scores;
+	
+	private NetworkTable table;
 
 	private int xMin = 0;
 	private int xMax = 90;
 	private int yMin = 0;
 	private int yMax = 100;
 	private int xShift = 0;
+	
+	private double graphingTime;
+	private double previousGraphingTime = 0;
+	private double angle;
 	
 	private static Scanner scan;
 	private static PrintWriter out;
@@ -68,8 +77,6 @@ public class GraphPanel extends JPanel implements Runnable
 //		System.out.print(lines.get(lineNumber).size());
 
 	}
-	
-
 
 	@Override
 	protected void paintComponent(Graphics g)
@@ -311,15 +318,18 @@ public class GraphPanel extends JPanel implements Runnable
 	public void run()
 	{
 		// TODO Auto-generated method stub
-		while(true)
+		while (true)
 		{
 			try
 			{
 				Thread.sleep(20);
-				addPoint(0,Math.random()*100);
+				graphingTime = table.getNumber("Time", 0.00);
+				angle = table.getNumber("Angle", 0.00);
+				if (graphingTime == 0 || graphingTime != previousGraphingTime)
+					addPoint(0, angle);
+				previousGraphingTime = graphingTime;
 				repaint();
-			}
-			catch (InterruptedException e)
+			} catch (InterruptedException e)
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
