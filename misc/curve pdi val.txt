@@ -1,0 +1,11 @@
+	static double kPS = 0.085000;
+	static double kIS = 0.008333;
+//	static double kDS = 0;
+	static double kDS = 0.001042;
+	
+	static double kPR = 0.028333;
+//	static double kPR = 0.085000/3f;
+	static double kIR = 0;
+//	static double kIR = 0.002777;
+//	static double kIR = 0.008333/3f;
+	static double kDR = 0;
