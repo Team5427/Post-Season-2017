@@ -291,12 +291,12 @@ public class GraphPanel extends JPanel implements Runnable
 	{
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
 		Date date = new Date();
-		dateString = dateFormat.format(date);
+		dateString = dateFormat.format(date)+".txt";
 		System.out.println(dateString);
-		out = new PrintWriter(new File("src/org/usfirst/frc5427/postSeason2017/"+dateString+".txt"));
-		scan = new Scanner(new File("src/org/usfirst/frc5427/postSeason2017/"+dateString+".txt"));
+		out = new PrintWriter(new File("HistoryGraphs/"+dateString));
+		scan = new Scanner(new File("HistoryGraphs/"+dateString));
 		
-		final File file = new File("src/"+dateString+".txt");
+		final File file = new File("HistoryGraphs/"+dateString);
 		file.createNewFile();
 		
 		SwingUtilities.invokeLater(new Runnable()

@@ -8,7 +8,7 @@ import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.io.*;
 
-public class GraphPointsScrollPanel extends JPanel implements MouseListener {
+public class GraphPointsScrollPanel extends JPanel implements MouseListener{
 
 	ArrayList<Double> points = new ArrayList<>();
 	ArrayList<String> timePoints = new ArrayList<>();
@@ -21,15 +21,29 @@ public class GraphPointsScrollPanel extends JPanel implements MouseListener {
 	private int xZoomCenter;
 	private int yZoomCenter;
 	private AffineTransform at;
+	private String selectedDate;
 
 	/*
 	 * X_SCALE_CONSTANT - Variable made to make changing the X Scale easy. Larger
 	 * makes the distance between points larger. Smaller makes the distance between
 	 * points smaller. PURELY VISUAL - Does not change the data whatsoever.
 	 */
-	public final int X_SCALE_CONSTANT = 10;
+	//spacing between each x label
+	public int X_SCALE_CONSTANT = 10;
+	
+	public void update() {
+		try {
+			readData();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		repaint();
+	}
 
 	public GraphPointsScrollPanel(int panelHeight) {
+		this.selectedDate = GraphPanel.dateString;
 		try {
 			readData();
 		} catch (IOException e) {
@@ -38,11 +52,19 @@ public class GraphPointsScrollPanel extends JPanel implements MouseListener {
 		this.xZoomScale = 1;
 		this.yZoomScale = 1;
 		this.zoomed = false;
-
-		this.panelWidth = points.size() * 100 + 100;
+		this.panelWidth = points.size() * X_SCALE_CONSTANT+70;
 		this.panelHeight = panelHeight;
 		// int w = 120 * 50 + 130;
 		addMouseListener(this);
+
+	}
+
+	public String getSelectedDate() {
+		return selectedDate;
+	}
+
+	public void setSelectedDate(String selectedDate) {
+		this.selectedDate = selectedDate;
 	}
 
 	public void paint(Graphics g) {
@@ -51,8 +73,11 @@ public class GraphPointsScrollPanel extends JPanel implements MouseListener {
 		g.setColor(Color.BLACK);
 		// creating y axis lines and labeling
 		for (int y = 100; y >= 0; y -= 5) {
+			//y coordinate on panel calculation
 			int ycoo = (int) ((y / 100.0) * (getHeight() - 90) + 20);
-			// g.drawString((100 - y)+"",20,ycoo + 2);
+			//label for y line
+			g.drawString((100 - y)+"",20,ycoo + 2);
+			//line
 			g.drawLine(40, ycoo, getWidth(), ycoo);
 		}
 
@@ -66,7 +91,7 @@ public class GraphPointsScrollPanel extends JPanel implements MouseListener {
 							(int) (560 * (yZoomScale + .04)));
 				else
 					g.drawString(x + "", x * (int) xZoomScale * X_SCALE_CONSTANT + 30, 560);
-			}
+				}
 
 			// drawing the lines every second
 			g.setColor(Color.RED);
@@ -78,7 +103,6 @@ public class GraphPointsScrollPanel extends JPanel implements MouseListener {
 			}
 
 			// points
-
 			g.fillOval(x * (int) xZoomScale * X_SCALE_CONSTANT + 35 - 3,
 					(int) (((100 - points.get(x).intValue()) / 100.0) * (getHeight() - 90) + 20 - 3), 6, 6);
 			g.setColor(Color.black);
@@ -96,8 +120,12 @@ public class GraphPointsScrollPanel extends JPanel implements MouseListener {
 	}
 
 	public void readData() throws IOException {
+		//reads data everytime new date is selected so the attributes must clear
+		points.clear();
+		timePoints.clear();
+		
 		BufferedReader br = new BufferedReader(
-				new FileReader("src/org/usfirst/frc5427/postSeason2017/" + GraphPanel.dateString + ".txt"));
+				new FileReader("HistoryGraphs/" + selectedDate));
 		String s = br.readLine();
 		String[] pointsText = (s.split(","));
 		ArrayList<String> ypoints = new ArrayList<>();
@@ -175,4 +203,6 @@ public class GraphPointsScrollPanel extends JPanel implements MouseListener {
 	public double getYZoomScale() {
 		return this.yZoomScale;
 	}
+
+	
 }

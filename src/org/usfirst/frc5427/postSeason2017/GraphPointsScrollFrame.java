@@ -6,32 +6,52 @@ package org.usfirst.frc5427.postSeason2017;
 
 import javax.swing.*;
 import java.awt.event.*;
+import java.io.File;
 import java.awt.*;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
+import javax.swing.JSplitPane;
 
-public class GraphPointsScrollFrame extends JFrame implements MouseListener {
+public class GraphPointsScrollFrame extends JFrame implements MouseListener, Runnable{
 
-	JScrollPane sp_textScroller = null;
-	JLabel y_lbl = null;
+	JScrollPane sp_textScroller;
+	
 	GraphPointsScrollPanel panel = null;
+	private JComboBox fileDates;
+	
+	//JSplitPane splitPane;
+	private String[] fileArray;
 
 	public GraphPointsScrollFrame() {
 
-		super(GraphPanel.dateString);
-
+		super("HistoryGraph");
+		Thread t = new Thread(this);
 		setSize(1200, 700);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLayout(null);
+		fileArray = fileStringArray();
 		panel = new GraphPointsScrollPanel(600);
 		panel.addMouseListener(this);
+		
+		//dropdown of file dates
+		fileDates = new JComboBox(fileArray);
+		fileDates.setBounds(getWidth() - 290, 25, getWidth() - (getWidth() - 290), 50);
+		
+		//panel is added to jscroll pane
 		sp_textScroller = new JScrollPane(panel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		sp_textScroller.setBounds(150, 25, getWidth() - 100, getHeight() - 70);
+		
+		//dimensions of the history graph/ jscroll pane (does not affect panel size)
+		sp_textScroller.setBounds(10, 25, getWidth() - 300, getHeight() - 70);
 		sp_textScroller.addMouseListener(this);
 		this.getContentPane().addMouseListener(this);
+		
+		
 		add(sp_textScroller);
+		add(fileDates);
 		setVisible(true);
+		setResizable(false);
+		t.start();
 	}
 
 	@Override
@@ -40,10 +60,12 @@ public class GraphPointsScrollFrame extends JFrame implements MouseListener {
 		g.fillRect(0, 0, getWidth(), getHeight());
 
 		g.setColor(Color.BLACK);
-		for (int y = 100; y >= 0; y -= 5) {
+		//old y scaling labeling (not needed anymore)
+		/*for (int y = 100; y >= 0; y -= 5) {
 			int ycoo = (int) ((y / 120.0) * (getHeight() - 90) + 100);
 			g.drawString((100 - y) + "", 140, ycoo);
 		}
+		*/
 		sp_textScroller.repaint();
 	}
 
@@ -89,5 +111,50 @@ public class GraphPointsScrollFrame extends JFrame implements MouseListener {
 	@Override
 	public void addNotify() {
 		super.addNotify();
+	}
+	
+	public String[] fileStringArray() {
+		//makes an array of files; index 0 is most recent.
+		File folder = new File("HistoryGraphs");
+		File[] listOfFiles = folder.listFiles();
+		String[] fileStringArray = new String[listOfFiles.length];
+		    for (int i = listOfFiles.length-1; i>=0; i--) {
+		      if (listOfFiles[i].isFile()) {
+		    	  fileStringArray[i] = listOfFiles[(listOfFiles.length-1)-i].getName();
+		    	  System.out.println(fileStringArray[i]);
+		      } else if (listOfFiles[i].isDirectory()) {
+		        System.out.println("Directory " + listOfFiles[i].getName());
+		      }
+		    }
+		
+		return fileStringArray;
+	}
+
+	public JComboBox getFileDates() {
+		return fileDates;
+	}
+
+	public void setFileDates(JComboBox fileDates) {
+		this.fileDates = fileDates;
+	}
+
+	public String[] getFileArray() {
+		return fileArray;
+	}
+
+	public void setFileArray(String[] fileArray) {
+		this.fileArray = fileArray;
+	}
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		while(true) {
+			if(panel.getSelectedDate() != fileArray[fileDates.getSelectedIndex()]) {
+				panel.setSelectedDate(fileArray[fileDates.getSelectedIndex()]);
+				panel.update();
+			}
+			
+		}
 	}
 }
