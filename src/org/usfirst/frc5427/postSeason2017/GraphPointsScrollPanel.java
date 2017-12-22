@@ -4,11 +4,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.io.*;
 
-public class GraphPointsScrollPanel extends JPanel implements MouseListener{
+public class GraphPointsScrollPanel extends JPanel implements MouseListener, MouseMotionListener{
 
 	ArrayList<Double> points = new ArrayList<>();
 	ArrayList<String> timePoints = new ArrayList<>();
@@ -22,7 +23,8 @@ public class GraphPointsScrollPanel extends JPanel implements MouseListener{
 	private int yZoomCenter;
 	private AffineTransform at;
 	private String selectedDate;
-
+	private double velocity;
+	private double time;
 	/*
 	 * X_SCALE_CONSTANT - Variable made to make changing the X Scale easy. Larger
 	 * makes the distance between points larger. Smaller makes the distance between
@@ -56,7 +58,7 @@ public class GraphPointsScrollPanel extends JPanel implements MouseListener{
 		this.panelHeight = panelHeight;
 		// int w = 120 * 50 + 130;
 		addMouseListener(this);
-
+		addMouseMotionListener(this);
 	}
 
 	public String getSelectedDate() {
@@ -202,6 +204,72 @@ public class GraphPointsScrollPanel extends JPanel implements MouseListener{
 
 	public double getYZoomScale() {
 		return this.yZoomScale;
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		// TODO Auto-generated method stub
+		//This if/else sets shows the X value which mouse is hovering
+		double newlocx;
+		if(!zoomed) {
+			double origin = e.getX() - 35;
+			newlocx = (origin/10);
+			setTime(newlocx);
+		}
+		else {
+			double origin = e.getX() - 35;
+			newlocx = (origin/20);
+			setTime(newlocx);
+		}
+		
+		//this section sets the Y value (velocity) based of the results of the X value from time
+		int x = 0;
+		while(newlocx > x) {
+			x++;
+			//if mouse hover x is the same as counter, use the y value at the integer index
+			if(newlocx > points.size()) {
+				setVelocity(0);
+			}
+			else if(newlocx == x) {
+				setVelocity(points.get(x));
+			}
+			//if in between integer points, then calculate percentage distance between two reference x pts
+			//and use the percentage to calculate the y value
+			else if(newlocx < x)
+			{
+				//percent between both x reference points
+				double percent = newlocx - (x-1);
+				//change in y value in both reference points
+				double dvelocity = (points.get(x) - points.get(x-1));
+				//calculates the change in y with the percentage* change in y value of ref. points
+				double Ychange = percent*dvelocity;
+				//sets the velocity by adding the change in y with the previous ref. pt.
+				setVelocity(points.get(x-1) + Ychange);
+			}
+		}
+			
+	}
+
+	public double getVelocity() {
+		return velocity;
+	}
+
+	public void setVelocity(double velocity) {
+		this.velocity = velocity;
+	}
+
+	public double getTime() {
+		return time;
+	}
+
+	public void setTime(double time) {
+		this.time = time;
 	}
 
 	

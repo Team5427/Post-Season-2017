@@ -10,7 +10,6 @@ import java.io.File;
 import java.awt.*;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.JSplitPane;
 
 public class GraphPointsScrollFrame extends JFrame implements MouseListener, Runnable{
 
@@ -18,9 +17,10 @@ public class GraphPointsScrollFrame extends JFrame implements MouseListener, Run
 	
 	GraphPointsScrollPanel panel = null;
 	private JComboBox fileDates;
-	
-	//JSplitPane splitPane;
 	private String[] fileArray;
+	private JFormattedTextField curVel;
+
+	private JFormattedTextField curTime;
 
 	public GraphPointsScrollFrame() {
 
@@ -32,6 +32,22 @@ public class GraphPointsScrollFrame extends JFrame implements MouseListener, Run
 		fileArray = fileStringArray();
 		panel = new GraphPointsScrollPanel(600);
 		panel.addMouseListener(this);
+		
+		//shows the Mouse's current location in proportion to the graph's data
+		curVel = new JFormattedTextField();
+		curVel.setBounds(getWidth() - 290, 500, getWidth() - (getWidth() - 290), 15);
+		curVel.setText("Velocity: "+(panel.getVelocity()));
+		curVel.setColumns(10);
+		curVel.setEditable(false);
+		curVel.setEnabled(false);
+		curVel.setForeground(Color.red);
+		curTime = new JFormattedTextField();
+		curTime.setBounds(getWidth() - 290, 520, getWidth() - (getWidth() - 290), 15);
+		curTime.setText("Time: "+ (panel.getTime()));
+		curTime.setColumns(10);
+		curTime.setEditable(false);
+		curTime.setEnabled(false);
+		curTime.setForeground(Color.red);
 		
 		//dropdown of file dates
 		fileDates = new JComboBox(fileArray);
@@ -46,7 +62,8 @@ public class GraphPointsScrollFrame extends JFrame implements MouseListener, Run
 		sp_textScroller.addMouseListener(this);
 		this.getContentPane().addMouseListener(this);
 		
-		
+		add(curVel);
+		add(curTime);
 		add(sp_textScroller);
 		add(fileDates);
 		setVisible(true);
@@ -121,7 +138,7 @@ public class GraphPointsScrollFrame extends JFrame implements MouseListener, Run
 		    for (int i = listOfFiles.length-1; i>=0; i--) {
 		      if (listOfFiles[i].isFile()) {
 		    	  fileStringArray[i] = listOfFiles[(listOfFiles.length-1)-i].getName();
-		    	  System.out.println(fileStringArray[i]);
+		    	  //System.out.println(fileStringArray[i]);
 		      } else if (listOfFiles[i].isDirectory()) {
 		        System.out.println("Directory " + listOfFiles[i].getName());
 		      }
@@ -154,7 +171,8 @@ public class GraphPointsScrollFrame extends JFrame implements MouseListener, Run
 				panel.setSelectedDate(fileArray[fileDates.getSelectedIndex()]);
 				panel.update();
 			}
-			
+			curVel.setText("Velocity: " + panel.getVelocity());
+			curTime.setText("Time: " + panel.getTime());
 		}
 	}
 }
