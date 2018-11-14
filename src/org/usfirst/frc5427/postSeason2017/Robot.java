@@ -11,19 +11,17 @@
 package org.usfirst.frc5427.postSeason2017;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.PIDController;
-import edu.wpi.first.wpilibj.PIDOutput;
-import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.wpilibj.livewindow.LiveWindowSendable;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
-import org.usfirst.frc5427.postSeason2017.commands.*;
-import org.usfirst.frc5427.postSeason2017.subsystems.*;
+import org.usfirst.frc5427.postSeason2017.OI;
+import org.usfirst.frc5427.postSeason2017.commands.DriveWithJoystick;
+import org.usfirst.frc5427.postSeason2017.subsystems.DriveTrain;
+import org.usfirst.frc5427.postSeason2017.subsystems.UltrasonicPID;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.SpeedController;
+import edu.wpi.first.wpilibj.SpeedControllerGroup;
 
 import com.kauailabs.navx.frc.AHRS;
 
@@ -35,48 +33,78 @@ import com.kauailabs.navx.frc.AHRS;
  * directory.
  */
 public class Robot extends IterativeRobot {
-
-	Command autonomousCommand;
-
+	/**
+	 * OI contains all of the controls that are used on the robot & the commands and
+	 * command groups that are linked to them.
+	 */
 	public static OI oi;
+
+	/**
+	 * DriveTrain contains the SpeedControllers that control the left and right
+	 * sides of the drive train on the robot in order to move.
+	 */
 	public static DriveTrain driveTrain;
+
+	/**
+	 * The SpeedController that controls the front left motor of the drivetrain.
+	 */
+	public static SpeedController motor_pwm_frontLeft;
+
+	/**
+	 * The SpeedController that controls the rear left motor of the drivetrain.
+	 */
+	public static SpeedController motor_pwm_rearLeft;
+
+	/**
+	 * The SpeedControllerGroup that includes the left side of the drivetrain.
+	 */
+	public SpeedControllerGroup speedcontrollergroup_left;
+
+	/**
+	 * The SpeedController that controls the front right motor of the drive train.
+	 */
+	public static SpeedController motor_pwm_frontRight;
+
+	/**
+	 * The SpeedController that controls the rear right motor of the drive train.
+	 */
+	public static SpeedController motor_pwm_rearRight;
+
+	/**
+	 * The SpeedControllerGroup that includes the right side of the drive train.
+	 */
+	public SpeedControllerGroup speedcontrollergroup_right;
+
+	/**
+	 * The command that controls the drive train and its movement.
+	 */
+	public DifferentialDrive drive;
+
+	/**
+	 * The command that uses joystick inputs to manipulate the drive train and other
+	 * subsystems.
+	 */
+	DriveWithJoystick dwj;
+	
+	/**
+	 * The class representing the NavX on the Robot that reads our current angular
+	 * placement.
+	 */
 	public static AHRS ahrs;
-	public static PIDController turnControllerStraight;
-	public static PIDController turnControllerRotate;
-	public static PIDController turnControllerRotate2;
-	public static Encoder encoderLeft;
-	public static Encoder encoderRight;
+	
+	public static UltrasonicPID ultra;
 
-	public double rightMotorSpeed = 0;
-	public double setpoint = 0;
-
-	static double kPS = 0.085000;
-	static double kIS = 0.008333;
-	static double kDS = 0.001042;
+//	static double kPS = 0.085000;
+//	static double kIS = 0.008333;
+//	static double kDS = 0.001042;
  
-	static double kPR = 0.01;
-	static double kIR = 0.0002;
-	static double kDR = 0.06;
+//	static double kPR = 0.01;
+//	static double kIR = 0.0002;
+//	static double kDR = 0.06;
 
-	static double kPT = 0.01;
-	static double kIT = 0.00121;
-	static double kDT = 0;
-
-	static double kToleranceDegrees = 1.0f;
-	double rotateToAngleRate = 0;
-
-	float startYaw = 0;
-	static double startTime;
-
-	static double targetYaw = 150;
-	static int countsBtwnTenths = 2;
-	static int counter = 0;
-	static double rampedSetpoint;
-
-	static boolean timeLoop;
-	static long loopPreviousTime;
-	static long loopCurrentTime;
-	static long targetTime;
+//	static double kPT = 0.01;
+//	static double kIT = 0.00121;
+//	static double kDT = 0;
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -84,8 +112,7 @@ public class Robot extends IterativeRobot {
 	 */
 	public void robotInit() {
 		RobotMap.init();
-		driveTrain = new DriveTrain();
-		autonomousCommand = new AutonomousCommand();
+		driveTrain = new DriveTrain(speedcontrollergroup_left, speedcontrollergroup_left, drive);
 		try {
 			ahrs = new AHRS(SPI.Port.kMXP) {
 				public double pidGet() {
@@ -113,8 +140,6 @@ public class Robot extends IterativeRobot {
 
 	public void autonomousInit() {
 		// schedule the autonomous command (example)
-		if (autonomousCommand != null)
-			autonomousCommand.start();
 	}
 
 	/**
@@ -125,8 +150,6 @@ public class Robot extends IterativeRobot {
 	}
 
 	public void teleopInit() {
-		if (autonomousCommand != null)
-			autonomousCommand.cancel();
 
 	}
 
