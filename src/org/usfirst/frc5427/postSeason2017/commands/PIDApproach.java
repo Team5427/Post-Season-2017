@@ -19,11 +19,14 @@ public class PIDApproach extends Command
 	{
 		straightPID = new PIDStraightMovement(0.5);//TODO: maximum speed, add to config
 		ultraPID.setSetpoint(0);
+		
+		straightPID.start();
 	}
 
 	@Override
 	protected void execute()
 	{
+		
 		if(ultraPID.ultra.getRangeInches() < 24)
 		{
 			straightPID.setRamping(false);

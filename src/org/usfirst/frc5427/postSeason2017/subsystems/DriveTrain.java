@@ -63,9 +63,8 @@ public class DriveTrain extends Subsystem {
 	 *            the joystick we utilize to drive the robot.
 	 */
 	public void takeJoystickInputs(Joystick joy) {
-		double speed = Math.abs(joy.getY()) > 0.05 ? joy.getY() : 0f;
 		drive.arcadeDrive(-joy.getY(), joy.getZ() * .75);
-
+		
 	}
 
 	/**

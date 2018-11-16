@@ -14,14 +14,20 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.usfirst.frc5427.postSeason2017.OI;
 import org.usfirst.frc5427.postSeason2017.commands.DriveWithJoystick;
+import org.usfirst.frc5427.postSeason2017.commands.PIDApproach;
+import org.usfirst.frc5427.postSeason2017.commands.PIDStraightMovement;
 import org.usfirst.frc5427.postSeason2017.subsystems.DriveTrain;
 import org.usfirst.frc5427.postSeason2017.subsystems.UltrasonicPID;
+import org.usfirst.frc5427.postSeason2017.util.Config;
+
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
+import edu.wpi.first.wpilibj.Talon;
 
 import com.kauailabs.navx.frc.AHRS;
 
@@ -32,142 +38,196 @@ import com.kauailabs.navx.frc.AHRS;
  * creating this project, you must also update the manifest file in the resource
  * directory.
  */
-public class Robot extends IterativeRobot {
+public class Robot extends IterativeRobot
+{
 	/**
-	 * OI contains all of the controls that are used on the robot & the commands and
-	 * command groups that are linked to them.
+	 * OI contains all of the controls that are used on the robot & the commands
+	 * and command groups that are linked to them.
 	 */
 	public static OI oi;
-
+	
 	/**
 	 * DriveTrain contains the SpeedControllers that control the left and right
 	 * sides of the drive train on the robot in order to move.
 	 */
 	public static DriveTrain driveTrain;
-
+	
 	/**
 	 * The SpeedController that controls the front left motor of the drivetrain.
 	 */
 	public static SpeedController motor_pwm_frontLeft;
-
+	
 	/**
 	 * The SpeedController that controls the rear left motor of the drivetrain.
 	 */
 	public static SpeedController motor_pwm_rearLeft;
-
+	
 	/**
 	 * The SpeedControllerGroup that includes the left side of the drivetrain.
 	 */
 	public SpeedControllerGroup speedcontrollergroup_left;
-
+	
 	/**
-	 * The SpeedController that controls the front right motor of the drive train.
+	 * The SpeedController that controls the front right motor of the drive
+	 * train.
 	 */
 	public static SpeedController motor_pwm_frontRight;
-
+	
 	/**
-	 * The SpeedController that controls the rear right motor of the drive train.
+	 * The SpeedController that controls the rear right motor of the drive
+	 * train.
 	 */
 	public static SpeedController motor_pwm_rearRight;
-
+	
 	/**
 	 * The SpeedControllerGroup that includes the right side of the drive train.
 	 */
 	public SpeedControllerGroup speedcontrollergroup_right;
-
+	
 	/**
 	 * The command that controls the drive train and its movement.
 	 */
 	public DifferentialDrive drive;
-
+	
 	/**
-	 * The command that uses joystick inputs to manipulate the drive train and other
-	 * subsystems.
+	 * The command that uses joystick inputs to manipulate the drive train and
+	 * other subsystems.
 	 */
 	DriveWithJoystick dwj;
 	
 	/**
-	 * The class representing the NavX on the Robot that reads our current angular
-	 * placement.
+	 * The class representing the NavX on the Robot that reads our current
+	 * angular placement.
 	 */
 	public static AHRS ahrs;
 	
 	public static UltrasonicPID ultra;
-
-//	static double kPS = 0.085000;
-//	static double kIS = 0.008333;
-//	static double kDS = 0.001042;
- 
-//	static double kPR = 0.01;
-//	static double kIR = 0.0002;
-//	static double kDR = 0.06;
-
-//	static double kPT = 0.01;
-//	static double kIT = 0.00121;
-//	static double kDT = 0;
-
+	
+	// static double kPS = 0.085000;
+	// static double kIS = 0.008333;
+	// static double kDS = 0.001042;
+	
+	// static double kPR = 0.01;
+	// static double kIR = 0.0002;
+	// static double kDR = 0.06;
+	
+	// static double kPT = 0.01;
+	// static double kIT = 0.00121;
+	// static double kDT = 0;
+	
+	public PIDApproach approach;
+	
+	public PIDStraightMovement straight;
+	
 	/**
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
 	 */
-	public void robotInit() {
-		RobotMap.init();
+	public void robotInit()
+	{
+		motor_pwm_frontLeft = new Talon(Config.FRONT_LEFT_MOTOR);
+		motor_pwm_rearLeft = new Talon(Config.REAR_LEFT_MOTOR);
+		speedcontrollergroup_left = new SpeedControllerGroup(motor_pwm_frontLeft, motor_pwm_rearLeft);
+
+		motor_pwm_frontRight = new Talon(Config.FRONT_RIGHT_MOTOR);
+		motor_pwm_rearRight = new Talon(Config.REAR_RIGHT_MOTOR);
+		speedcontrollergroup_right = new SpeedControllerGroup(motor_pwm_frontRight, motor_pwm_rearRight);
+		
+		drive = new DifferentialDrive(speedcontrollergroup_left, speedcontrollergroup_right);
+		
 		driveTrain = new DriveTrain(speedcontrollergroup_left, speedcontrollergroup_left, drive);
-		try {
-			ahrs = new AHRS(SPI.Port.kMXP) {
-				public double pidGet() {
+		
+		ultra = new UltrasonicPID(3, 2);
+		
+		try
+		{
+			ahrs = new AHRS(SPI.Port.kMXP)
+			{
+				public double pidGet()
+				{
 					return ahrs.getYaw();
 				}
 			};
-		} catch (RuntimeException ex) {
+		}
+		catch (RuntimeException ex)
+		{
 			DriverStation.reportError("Error instantiating navX-MXP: " + ex.getMessage(), true);
 		}
-
+		
 		oi = new OI();
 	}
-
+	
 	/**
 	 * This function is called when the disabled button is hit. You can use it
 	 * to reset subsystems before shutting down.
 	 */
-	public void disabledInit() {
-
+	public void disabledInit()
+	{
+		
 	}
-
-	public void disabledPeriodic() {
+	
+	public void disabledPeriodic()
+	{
 		Scheduler.getInstance().run();
 	}
+	
+	public void autonomousInit()
+	{
+		Scheduler.getInstance().run();
+		ahrs.reset();
+//		approach = new PIDApproach();
+//		approach.start();
 
-	public void autonomousInit() {
-		// schedule the autonomous command (example)
+		straight = new PIDStraightMovement(0.5);
+		straight.start();
 	}
-
+	
 	/**
 	 * This function is called periodically during autonomous
 	 */
-	public void autonomousPeriodic() {
+	public void autonomousPeriodic()
+	{
 		Scheduler.getInstance().run();
+//		if(approach == null)
+//		{
+//			approach = new PIDApproach();
+//			approach.start();
+//		}
+		
+		if(straight == null)
+		{
+			straight = new PIDStraightMovement(0.5);
+			straight.start();
+		}
+		
+		SmartDashboard.putNumber("Yaw", ahrs.getYaw());
+//		SmartDashboard.putNumber("Ultrasonic", ultra.ultra.getRangeInches());
 	}
-
-	public void teleopInit() {
-
+	
+	public void teleopInit()
+	{
+		
 	}
-
+	
 	/**
 	 * This function is called periodically during operator control
 	 */
-	public void teleopPeriodic() {
+	public void teleopPeriodic()
+	{
 		Scheduler.getInstance().run();
+		SmartDashboard.putNumber("Ultrasonic:", ultra.ultra.getRangeInches());
 	}
-
-	public void testInit() {
+	
+	public void testInit()
+	{
 	}
-
+	
 	/**
 	 * This function is called periodically during test mode - around 50 times a
 	 * second
 	 */
-	public void testPeriodic() {
+	public void testPeriodic()
+	{
 	}
-
+	
 }
