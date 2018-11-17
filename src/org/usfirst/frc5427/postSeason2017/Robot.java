@@ -135,7 +135,7 @@ public class Robot extends IterativeRobot
 		
 		drive = new DifferentialDrive(speedcontrollergroup_left, speedcontrollergroup_right);
 		
-		driveTrain = new DriveTrain(speedcontrollergroup_left, speedcontrollergroup_left, drive);
+		driveTrain = new DriveTrain(speedcontrollergroup_left, speedcontrollergroup_right, drive);
 		
 		ultra = new UltrasonicPID(3, 2);
 		
@@ -175,11 +175,11 @@ public class Robot extends IterativeRobot
 	{
 		Scheduler.getInstance().run();
 		ahrs.reset();
-//		approach = new PIDApproach();
-//		approach.start();
+		approach = new PIDApproach();
+		approach.start();
 
-		straight = new PIDStraightMovement(0.5);
-		straight.start();
+//		straight = new PIDStraightMovement(0.3);
+//		straight.start();
 	}
 	
 	/**
@@ -188,20 +188,20 @@ public class Robot extends IterativeRobot
 	public void autonomousPeriodic()
 	{
 		Scheduler.getInstance().run();
-//		if(approach == null)
-//		{
-//			approach = new PIDApproach();
-//			approach.start();
-//		}
-		
-		if(straight == null)
+		if(approach == null)
 		{
-			straight = new PIDStraightMovement(0.5);
-			straight.start();
+			approach = new PIDApproach();
+			approach.start();
 		}
 		
+//		if(straight == null)
+//		{
+//			straight = new PIDStraightMovement(0.3);
+//			straight.start();
+//		}
+		
 		SmartDashboard.putNumber("Yaw", ahrs.getYaw());
-//		SmartDashboard.putNumber("Ultrasonic", ultra.ultra.getRangeInches());
+		SmartDashboard.putNumber("Ultrasonic", ultra.ultra.getRangeInches());
 	}
 	
 	public void teleopInit()
@@ -215,7 +215,7 @@ public class Robot extends IterativeRobot
 	public void teleopPeriodic()
 	{
 		Scheduler.getInstance().run();
-		SmartDashboard.putNumber("Ultrasonic:", ultra.ultra.getRangeInches());
+		SmartDashboard.putNumber("Ultrasonic", ultra.ultra.getRangeInches());
 	}
 	
 	public void testInit()

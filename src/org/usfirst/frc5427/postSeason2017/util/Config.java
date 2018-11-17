@@ -181,7 +181,7 @@ public class Config {
 	/**
 	 * The linear increment used in PIDControllers.
 	 */
-	public static final double PID_STRAIGHT_LINEAR_INCREMENT = .004;
+	public static final double PID_STRAIGHT_LINEAR_INCREMENT = .003;
 
 	/**
 	 * The exponential increment used in PIDControllers.

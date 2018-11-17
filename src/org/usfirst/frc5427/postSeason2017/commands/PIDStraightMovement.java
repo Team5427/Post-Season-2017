@@ -53,34 +53,10 @@ public class PIDStraightMovement extends PIDCommand
 	public double power;
 	
 	/**
-	 * The P value for the PIDController in PIDDistance.
-	 */
-	private double p;
-	
-	/**
-	 * The I value for the PIDController in PIDDistance.
-	 */
-	private double i;
-	
-	/**
-	 * The D value for the PIDController in PIDDistance.
-	 */
-	private double d;
-	
-	/**
-	 * Creates the PIDController for this command using config PID values and
-	 * sets the parameters of its control.
+	 * Creates the PIDController for this command with a maximum speed
 	 * 
 	 * @param maximumSpeed
 	 *            the maximum speed that the robot will travel at.
-	 * @param desiredDistance
-	 *            the distance that we want to travel.
-	 * @param p
-	 *            the P value for the PIDController in PIDDistance.
-	 * @param i
-	 *            the I value for the PIDController in PIDDistance.
-	 * @param d
-	 *            the D value for the PIDController in PIDDistance.
 	 */
 	public PIDStraightMovement(double maximumSpeed)
 	{
@@ -89,9 +65,6 @@ public class PIDStraightMovement extends PIDCommand
 		this.scgPIDControlled = Robot.driveTrain.drive_Left;
 		this.scgRamping = Robot.driveTrain.drive_Right;
 		this.maximumSpeed = maximumSpeed;
-		this.p = 0.01;
-		this.i = 0;
-		this.d = 0.01;
 		
 		this.setInterruptible(true);
 		this.getPIDController().setSetpoint(0);
@@ -147,11 +120,8 @@ public class PIDStraightMovement extends PIDCommand
 			this.power += Config.PID_STRAIGHT_LINEAR_INCREMENT;
 			scgRamping.set(power);
 		}
-		else if (power > maximumSpeed)
-			scgRamping.set(power);
-		
-		System.out.println(
-				"\n\nOutput: " + output + "\n\nRamping: " + scgRamping.get() + "\n\nControlled: " + scgPIDControlled.get());
+		else if (power > maximumSpeed && isRamping)
+			scgRamping.set(maximumSpeed);		
 	}
 	
 	public void setRamping(boolean ramp)

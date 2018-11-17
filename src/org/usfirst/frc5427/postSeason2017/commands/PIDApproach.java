@@ -17,7 +17,7 @@ public class PIDApproach extends Command
 	
 	protected void initialize()
 	{
-		straightPID = new PIDStraightMovement(0.5);//TODO: maximum speed, add to config
+		straightPID = new PIDStraightMovement(0.3);//TODO: maximum speed, add to config
 		ultraPID.setSetpoint(0);
 		
 		straightPID.start();
