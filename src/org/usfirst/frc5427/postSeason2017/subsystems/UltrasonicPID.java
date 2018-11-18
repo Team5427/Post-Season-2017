@@ -14,13 +14,14 @@ public class UltrasonicPID extends PIDSubsystem
 	
 	public UltrasonicPID(int ping, int echo)
 	{
-		super(0.1, 0, 0.01); //random PID values
+		super(0.033, 0, 0.03);
 		ultra = new Ultrasonic(ping, echo);
 		ultra.setAutomaticMode(true);
 		
 		scgControlled = Robot.driveTrain.drive_Right;
 		
 		this.setOutputRange(-1, 1);
+		this.setAbsoluteTolerance(0.1);
 	}
 
 	@Override

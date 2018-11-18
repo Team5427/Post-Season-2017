@@ -4,6 +4,7 @@ import org.usfirst.frc5427.postSeason2017.Robot;
 import org.usfirst.frc5427.postSeason2017.subsystems.UltrasonicPID;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class PIDApproach extends Command
 {
@@ -17,17 +18,17 @@ public class PIDApproach extends Command
 	
 	protected void initialize()
 	{
-		straightPID = new PIDStraightMovement(0.3);//TODO: maximum speed, add to config
-		ultraPID.setSetpoint(0);
+		straightPID = new PIDStraightMovement(0.3);// TODO: maximum speed, add
+													// to config
+		ultraPID.setSetpoint(2.5);
 		
 		straightPID.start();
 	}
-
+	
 	@Override
 	protected void execute()
 	{
-		
-		if(ultraPID.ultra.getRangeInches() < 24)
+		if (ultraPID.ultra.getRangeInches() < 24)
 		{
 			straightPID.setRamping(false);
 			ultraPID.enable();
@@ -37,11 +38,13 @@ public class PIDApproach extends Command
 	@Override
 	protected boolean isFinished()
 	{
-		return ultraPID.ultra.getRangeInches() == 12;
+		System.out.println(Math.abs(ultraPID.getPosition() - ultraPID.getSetpoint()));
+		return Math.abs(ultraPID.getPosition() - ultraPID.getSetpoint()) <= 0.5;
 	}
 	
 	protected void end()
 	{
+		System.out.print("DONE");
 		ultraPID.disable();
 		straightPID.end();
 	}

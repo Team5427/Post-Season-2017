@@ -139,7 +139,7 @@ public class Config {
 	/**
 	 * The I value used for moving straight.
 	 */
-	public static final double PID_STRAIGHT_I = 0.008333;
+	public static final double PID_STRAIGHT_I = 0;
 
 	/**
 	 * The D value used for moving straight.
