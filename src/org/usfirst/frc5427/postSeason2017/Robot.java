@@ -177,7 +177,8 @@ public class Robot extends IterativeRobot
 		ahrs.reset();
 		approach = new PIDApproach();
 		approach.start();
-
+		ultra.disable();
+		
 //		straight = new PIDStraightMovement(0.3);
 //		straight.start();
 	}
