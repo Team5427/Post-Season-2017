@@ -18,9 +18,9 @@ public class PIDApproach extends Command
 	
 	protected void initialize()
 	{
-		straightPID = new PIDStraightMovement(0.3);// TODO: maximum speed, add
+		straightPID = new PIDStraightMovement(0.2);// TODO: maximum speed, add
 													// to config
-		ultraPID.setSetpoint(12);
+		ultraPID.setSetpoint(24);
 		
 		ultraPID.disable();
 		
@@ -30,20 +30,24 @@ public class PIDApproach extends Command
 	@Override
 	protected void execute()
 	{
-		SmartDashboard.putNumber("Distance", ultraPID.ultra.getRangeInches());
-		if (ultraPID.ultra.getRangeInches() < 24 && !ultraPID.enabled)
+		
+		if (ultraPID.ultra.getRangeInches() <= 48 && !ultraPID.enabled)
 		{
+			SmartDashboard.putNumber("Start", ultraPID.getDistance());
 			straightPID.setRamping(false);
 			ultraPID.enable();
 			ultraPID.enabled = true;
-			SmartDashboard.putNumber("Start", ultraPID.ultra.getRangeInches());
 		}
 	}
 	
 	@Override
 	protected boolean isFinished()
 	{
-		return Math.abs(ultraPID.getPosition() - ultraPID.getSetpoint()) <= 0.5;
+		SmartDashboard.putNumber("Setpoint" , ultraPID.getSetpoint());
+		SmartDashboard.putNumber("Ultra Dist", ultraPID.getDistance());
+		SmartDashboard.putNumber("Error" , (ultraPID.getDistance() - ultraPID.getSetpoint()));
+//		return Math.abs(ultraPID.getDistance() - ultraPID.getSetpoint()) <= 0.5;
+		return false;
 	}
 	
 	protected void end()

@@ -15,33 +15,47 @@ public class UltrasonicPID extends PIDSubsystem
 	
 	public boolean enabled;
 	
-	public UltrasonicPID(int ping, int echo)
+	public double currentDistance;
+	
+	public UltrasonicPID(int ping , int echo)
 	{
-		super(0.001, 0, 0.03);
-		ultra = new Ultrasonic(ping, echo);
+		super(0.2 , 0.0 , 0.8);
+		ultra = new Ultrasonic(ping , echo);
 		ultra.setAutomaticMode(true);
 		
 		scgControlled = Robot.driveTrain.drive_Right;
 		
-		this.setOutputRange(-0.3, 0.3);
+		
+		this.setOutputRange(-1 , 1);
 		this.setAbsoluteTolerance(0.1);
 		
 		enabled = false;
 	}
-
+	
+	public void updateDistance()
+	{
+		this.currentDistance = ultra.getRangeInches();
+	}
+	
+	public double getDistance()
+	{
+		return this.currentDistance;
+	}
+	
 	@Override
 	protected double returnPIDInput()
 	{
 		return ultra.getRangeInches();
 	}
-
+	
 	@Override
 	protected void usePIDOutput(double output)
 	{
-		SmartDashboard.putNumber("PID OUTPUT", output);
+		SmartDashboard.putNumber("Right Motor" , output);
+		SmartDashboard.putNumber("Left Motor", Robot.driveTrain.drive_Left.get());
 		scgControlled.pidWrite(-output);
 	}
-
+	
 	@Override
 	protected void initDefaultCommand()
 	{

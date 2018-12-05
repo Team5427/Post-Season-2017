@@ -11,6 +11,7 @@ import org.usfirst.frc5427.postSeason2017.util.Config;
 
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.command.PIDCommand;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * This class is adapted from the WPILib PIDCommand Class. This class is made to
@@ -122,6 +123,10 @@ public class PIDStraightMovement extends PIDCommand
 		}
 		else if (power > maximumSpeed && isRamping)
 			scgRamping.set(maximumSpeed);		
+		
+
+		SmartDashboard.putNumber("Right Motor" , Robot.driveTrain.drive_Right.get());
+		SmartDashboard.putNumber("Left Motor", Robot.driveTrain.drive_Left.get());
 	}
 	
 	public void setRamping(boolean ramp)

@@ -134,7 +134,7 @@ public class Config {
 	/**
 	 * The P value used for moving straight.
 	 */
-	public static final double PID_STRAIGHT_P = .085;
+	public static final double PID_STRAIGHT_P = .065;
 
 	/**
 	 * The I value used for moving straight.
@@ -144,7 +144,7 @@ public class Config {
 	/**
 	 * The D value used for moving straight.
 	 */
-	public static final double PID_STRAIGHT_D = .001042;
+	public static final double PID_STRAIGHT_D = .1042;
 
 	/**
 	 * The P value used for coasting .

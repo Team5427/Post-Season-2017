@@ -188,6 +188,8 @@ public class Robot extends IterativeRobot
 	 */
 	public void autonomousPeriodic()
 	{
+		ultra.updateDistance();
+		
 		Scheduler.getInstance().run();
 		if(approach == null)
 		{
@@ -200,9 +202,9 @@ public class Robot extends IterativeRobot
 //			straight = new PIDStraightMovement(0.3);
 //			straight.start();
 //		}
-		
+		SmartDashboard.putNumber("Distance", ultra.getDistance());
 		SmartDashboard.putNumber("Yaw", ahrs.getYaw());
-		SmartDashboard.putNumber("Ultrasonic", ultra.ultra.getRangeInches());
+		SmartDashboard.putNumber("Ultrasonic", ultra.getDistance());
 	}
 	
 	public void teleopInit()
@@ -216,7 +218,8 @@ public class Robot extends IterativeRobot
 	public void teleopPeriodic()
 	{
 		Scheduler.getInstance().run();
-		SmartDashboard.putNumber("Ultrasonic", ultra.ultra.getRangeInches());
+		ultra.updateDistance();
+		SmartDashboard.putNumber("Ultrasonic", ultra.getDistance());
 	}
 	
 	public void testInit()
